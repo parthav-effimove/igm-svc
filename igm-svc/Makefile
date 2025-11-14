@@ -1,4 +1,30 @@
-.PHONY: help  run  docker-up docker-down clean
+.PHONY: help  run  docker-up docker-down clean migrate-up migrate-down migrate-version migrate-drop migrate-force migrate-create
+
+migrate-up:
+	@./scripts/migrate.sh up
+
+migrate-down:
+	@./scripts/migrate.sh down
+
+migrate-drop:
+	@./scripts/migrate.sh drop
+
+migrate-version:
+	@./scripts/migrate.sh version
+
+migrate-force:
+	@if [ -z "$(VERSION)" ]; then \
+        echo "❌ Usage: make migrate-force VERSION=<version>"; \
+        exit 1; \
+    fi
+	@./scripts/migrate.sh force $(VERSION)
+
+migrate-create:
+	@if [ -z "$(NAME)" ]; then \
+        echo "❌ Usage: make migrate-create NAME=<migration_name>"; \
+        exit 1; \
+    fi
+	@./scripts/migrate.sh create $(NAME)
 
 help:
 	@echo "Available commands:"
