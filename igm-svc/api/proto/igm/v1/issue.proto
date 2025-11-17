@@ -1,0 +1,170 @@
+syntax = "proto3";
+
+package igm.v1;
+
+option go_package = "github/effimove/igm-svc/api/proto/igm/v1;igmb";
+
+service IssueService{
+    rpc CreateIssue(CreateIssueRequest) returns(CreateIssueResponse);
+    rpc UpdateIssue(UpdateIssueRequest) returns(UpdateIssueResponse);
+    rpc CloseIssue(CloseIssueRequest) returns(CloseIssueResponse);
+
+
+    rpc GetIssue(GetIssueRequest) returns(GetIssueResponse);
+    rpc ListIssues(ListIssueRequest) returns(ListIssueResponse);
+    rpc ListIssueByOrder(ListIssueByOrderRequest) returns(ListIssueResponse);
+
+    rpc HandleOnIssue(OnIssueRequest) returns(OnIssueResponse);
+    rpc HandleOnIssueStatus(OnIssueStatusRequest) returns(OnIssueStatusResponse);
+
+}
+
+//+++++create issue++++++++
+message CreateIssueRequest{
+    string user_id = 1;
+    string order_id = 2;
+    string category = 3;
+    string sub_category = 4;
+    string issue_type = 5;
+    string description = 6;
+    string long_description = 7;
+
+    repeated string image_urls = 8;
+    AdditionalDescription additional_desc = 9;
+
+    repeated IssueItem items = 10;
+}
+
+message AdditionalDescription{
+    string url = 1;
+    string content_type = 2;
+}
+
+message IssueItem{
+    string id = 1;
+    int32 quantity = 2;
+}
+
+message CreateIssueResponse{
+    string issue_id = 1;
+    string order_id = 2;
+    string status = 3;  //open
+    string transaction_id = 4;
+    string created_at = 5;
+
+    bool ondc_sent = 6;
+    string ondc_message = 7;
+}
+
+//++++++update issue++++++++
+message UpdateIssueRequest{
+    string user_id = 1;
+    string issue_id = 2;
+    string order_id = 3;
+    string issue_type = 4;
+    string status = 5; //new status
+    string complaint_action_short_desc = 6;
+}
+
+message UpdateIssueResponse{
+    string issue_id = 1;
+    string status = 2;
+    string updated_at = 3;
+    bool ondc_sent = 4;
+    string ondc_message = 5;
+}
+
+//++++++++close issue ++++++++++
+message CloseIssueRequest{
+    string user_id = 1;
+    string issue_id = 2;
+    string order_id = 3;
+    string rating = 4;
+    string status = 5; //closed
+    string complaint_act_short_desc = 6;
+}
+
+message CloseIssueResponse{
+    string issue_id = 1;
+    string status = 2;
+    string closed_at = 3;
+    bool ondc_sent = 4;
+    string ondc_message = 5;
+}
+
+//++++++++ get issue ++++++++++
+message GetIssueRequest{
+    string user_id = 1;
+    string issue_id = 2;
+}
+
+message GetIssueResponse{
+    Issue issue =1;
+}
+
+//++++++ list issues ++++++
+message ListIssueRequest{
+    string user_id = 1;
+    int32 page = 2;
+    int32 page_size = 3;
+}
+
+message ListIssueByOrderRequest{
+    string user_id = 1;
+    string order_id = 2;
+}
+
+message ListIssueResponse{
+    repeated Issue issues = 1;
+    int32 total_count = 2;
+    int32 page = 3;
+    int32 page_sizee = 4;
+}
+
+//+++++++ ONDC callback ++++++
+
+message OnIssueRequest{
+    string transaction_id = 1;
+    string message_id = 2;
+    string payload = 3;
+}
+
+message OnIssueResponse{
+    string status = 1;
+    string message = 2;
+}
+
+message OnIssueStatusRequest{
+    string transaction_id = 1;
+    string message_id = 2;
+    string payload = 3;
+}
+
+message OnIssueStatusResponse{
+    string status = 1;
+    string message = 2;
+}
+
+//+++++++++++++++++++++++++++++++
+
+message Issue{
+    string issue_id = 1;
+    string order_id = 2;
+    string user_id = 3;
+    string transaction_id = 4;
+
+    string category = 5;
+    string sub_category = 6;
+    string issue_type = 7;
+    string status = 8;
+
+    string description_short = 9;
+    string description_long = 10;
+    repeated string image_urls = 11;
+
+    string bpp_id = 12;
+    string bpp_uri = 13;
+
+    string created_at = 14;
+    string updated_at = 15;
+}
