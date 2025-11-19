@@ -1,25 +1,26 @@
 package services
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"igm-svc/internal/models"
 	"igm-svc/internal/repository"
-	"io"
 	"log"
-	"net/http"
 	"time"
+
+	//replace with repo
+	pb "igm-svc/api/proto/igm/v1"
 
 	"github.com/google/uuid"
 	"gorm.io/datatypes"
 )
 
 type IssueService struct {
-	issueRepo repository.IssueRepository
-	redisRepo repository.RedisRepository
-	config    *Config
+	issueRepo  repository.IssueRepository
+	redisRepo  repository.RedisRepository
+	OndcClient *OndcClient
+	config     *Config
 }
 
 type Config struct {
@@ -29,18 +30,36 @@ type Config struct {
 
 func NewIssueService(issueRepo repository.IssueRepository,
 	redisRepo repository.RedisRepository,
+	ondcClient *OndcClient,
 	config *Config,
 ) *IssueService {
 	return &IssueService{
-		issueRepo: issueRepo,
-		redisRepo: redisRepo,
-		config:    config,
+		issueRepo:  issueRepo,
+		redisRepo:  redisRepo,
+		OndcClient: ondcClient,
+		config:     config,
 	}
 }
 
-func (s *IssueService) CreateIssue(ctx context.Context, req *models.IssueCreateRequest, userID uuid.UUID) (*models.Issue, error) {
+func (s *IssueService) CreateIssue(ctx context.Context, req *pb.CreateIssueRequest) (*pb.CreateIssueResponse, error) {
 
-	issue, err := s.buildIssueFromRequest(req, userID)
+	err := s.validateCreateRequest(req)
+	if err != nil {
+		return nil, fmt.Errorf("validation failed :%w", err)
+	}
+
+	userID, err := uuid.Parse(req.UserId)
+	if err != nil {
+		return nil, fmt.Errorf("invalid user_id :%w", err)
+	}
+
+	// 3. TODO: Verify order exists and belongs to user
+	//orderDetails:= orderClient.VerifyOrder(ctx, req.OrderId, req.UserId)
+	// For now, use mock BPP details
+	bppID := "preprod.logistics-seller.mp2.in"
+	bppURI := "https://preprod.logistics-seller.mp2.in/ondc"
+
+	issue, err := s.buildIssueFromRequest(req, userID, bppID, bppURI)
 	if err != nil {
 		return nil, fmt.Errorf("failed to build issue:%w", err)
 	}
@@ -50,34 +69,83 @@ func (s *IssueService) CreateIssue(ctx context.Context, req *models.IssueCreateR
 		return nil, fmt.Errorf("failed to save issue :%w", err)
 	}
 	log.Printf("issue saved to DB :%s", issue.IssueID)
+	ondcSend:=false
+	ondcMessage :=""
 
-	err = s.sendIssueToBPP(ctx, issue, "OPEN")
-	if err!=nil{
-		log.Printf("failed to send issue to BPP:%v",err)
+	err = s.OndcClient.SendIssue(ctx, issue, "OPEN")
+	if err != nil {
+		log.Printf("failed to send issue to BPP:%v", err)
+		ondcMessage = fmt.Sprintf("Failed to send to BPP: %v", err)
+	}else{
+		ondcSend=true
+		ondcMessage="Issue sent to BPP successfully"
+		log.Printf("[Service] Issue sent to ONDC successfully")
+		_=s.redisRepo.SaveIssueResponse(ctx,issue.TransactionID,map[string]interface{}{
+			"action":"issue",
+			"issue_id":issue.IssueID,
+			"timestamp":time.Now().Format(time.RFC3339),
+		})
 	}
 
-	return  issue,nil
+	return &pb.CreateIssueResponse{
+		IssueId: issue.IssueID,
+		OrderId: issue.OrderID,
+		Status: issue.Status,
+		TransactionId: issue.TransactionID,
+		CreatedAt: issue.CreatedAt.Format(time.RFC3339),
+		OndcSent: ondcSend,
+		OndcMessage: ondcMessage,
+	},nil
+
+	
 
 }
+func (s *IssueService) validateCreateRequest(req *pb.CreateIssueRequest) error {
+	if req.UserId == "" {
+		return fmt.Errorf("user_id is required")
+	}
+	if req.OrderId == "" {
+		return fmt.Errorf("order_id is required")
+	}
+	if req.Category == "" {
+		return fmt.Errorf("catergory is required")
+	}
+	if req.SubCategory == "" {
+		return fmt.Errorf("sub_category is required")
+	}
+	if req.IssueType == "" {
+		return fmt.Errorf("issue_type is required")
+	}
+	if req.Description == "" {
+		return fmt.Errorf("description is required")
+	}
+	return nil
+}
 
-func (s *IssueService) buildIssueFromRequest(req *models.IssueCreateRequest, userID uuid.UUID) (*models.Issue, error) {
+func (s *IssueService) buildIssueFromRequest(req *pb.CreateIssueRequest,
+	userID uuid.UUID,
+	bppID, bppURI string,
+) (*models.Issue, error) {
 	now := time.Now()
 	issueID := uuid.New().String()
 
-	// TODO: Fetch order details from Order Service to get BPPID, BPPURI
-
-	bppID := "demo-bpp-id"
-	bppURI := "https://demo-bpp.com"
-
-	imagesJSON, err := json.Marshal(req.ImageURLs)
+	imagesJSON, err := json.Marshal(req.ImageUrls)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal images:%w", err)
 	}
 
+	orderItems := make([]map[string]interface{}, len(req.Items))
+	for i, item := range req.Items {
+		orderItems[i] = map[string]interface{}{
+			"id":       item.Id,
+			"quantity": item.Quantity,
+		}
+	}
+
 	orderDetailsMap := map[string]interface{}{
-		"id":          req.OrderID,
+		"id":          req.OrderId,
 		"provider_id": bppID,
-		"items":       req.Items,
+		"items":       orderItems,
 	}
 
 	orderDetailsJSON, err := json.Marshal(orderDetailsMap)
@@ -110,7 +178,7 @@ func (s *IssueService) buildIssueFromRequest(req *models.IssueCreateRequest, use
 
 	issue := &models.Issue{
 		IssueID:                issueID,
-		OrderID:                req.OrderID,
+		OrderID:                req.OrderId,
 		UserID:                 userID,
 		TransactionID:          uuid.New().String(),
 		BPPID:                  bppID,
@@ -120,7 +188,7 @@ func (s *IssueService) buildIssueFromRequest(req *models.IssueCreateRequest, use
 		IssueType:              req.IssueType,
 		Status:                 "OPEN",
 		DescriptionShort:       req.Description,
-		DescriptionLong:        req.LongDesc,
+		DescriptionLong:        req.LongDescription,
 		DescriptionURL:         req.AdditionalDesc.Url,
 		DescriptionContentType: req.AdditionalDesc.ContentType,
 		Images:                 datatypes.JSON(imagesJSON),
@@ -130,194 +198,14 @@ func (s *IssueService) buildIssueFromRequest(req *models.IssueCreateRequest, use
 		SourceType:             "CONSUMER",
 		ExpectedResponseTime:   "PT2H",
 		ExpectedResolutionTime: "P1D",
-		Rating:                 req.Rating,
 		CreatedAt:              now,
 		UpdatedAt:              now,
 	}
 
+	if req.AdditionalDesc != nil && req.AdditionalDesc.Url != "" {
+		issue.DescriptionURL = req.AdditionalDesc.Url
+		issue.DescriptionContentType = req.AdditionalDesc.ContentType
+	}
+
 	return issue, nil
-}
-
-func (s *IssueService) sendIssueToBPP(ctx context.Context, issue *models.Issue, operation string) error {
-	log.Printf("Sending issue to BPP:%s", issue.BPPURI)
-
-	payload, err := s.buildIssuePayload(issue, operation)
-
-	if err!=nil{
-		return fmt.Errorf("failed to build payload:%w",err)
-	}
-	body,err :=json.Marshal(payload)
-	if err!=nil{
-		return fmt.Errorf("failed to marhsal payload:%w",err)
-	}
-
-	authHeader,err :=s.createAuthHeader(body)
-	if err!=nil{
-		return fmt.Errorf("failed to create auth header:%w",err)
-	}
-
-	url:=issue.BPPURI
-	if url[len(url)-1]!='/'{
-		url+="/"
-	}
-	url+="issue"
-
-	httpReq,err :=http.NewRequest("POST",url,bytes.NewBuffer(body))
-	if err!=nil{
-		return fmt.Errorf("failed to create HTTP req:%w",err)
-	}
-	httpReq.Header.Set("Content-Type","application/json")
-	httpReq.Header.Set("Authorization",authHeader)
-
-	client :=&http.Client{Timeout: 10*time.Second}
-
-	resp,err :=client.Do(httpReq)
-	if err!=nil{
-		return  fmt.Errorf("http req failed:%w",err)
-	}
-	defer resp.Body.Close()
-
-	respBody, err :=io.ReadAll(resp.Body)
-	if err!=nil{
-		return fmt.Errorf("failed to read response body:%w",err)
-	}
-	log.Printf("BPP response: %s",string(respBody))
-
-	err=s.redisRepo.SaveIssueResponse(ctx,issue.TransactionID,map[string]interface{}{
-		"action":"issue",
-		"request":payload,
-		"response":string(respBody),
-	})
-	if err!=nil{
-		log.Printf("failed to cache issue response %w",err)
-	}
-	 // TODO: Save to ONDC logs service (via gRPC call)
-    // TODO: Submit to transaction logs API
-
-	return nil
-}
-
-// buildIssuePayload builds ONDC /issue request payload
-func (s *IssueService) buildIssuePayload(issue *models.Issue, operation string) (map[string]interface{}, error) {
-	ctx := map[string]interface{}{
-		"domain":         "nic2004:60232",
-		"country":        "IND",
-		"city":           "std:080",
-		"action":         "issue",
-		"core_version":   "1.2.0",
-		"bap_id":         s.config.SubcriberID,
-		"bap_uri":        s.config.BAPURI,
-		"bpp_id":         issue.BPPID,
-		"bpp_uri":        issue.BPPURI,
-		"transaction_id": issue.TransactionID,
-		"message_id":     uuid.New().String(),
-		"timestamp":      time.Now().UTC().Format(time.RFC3339),
-		"ttl":            "PT30S",
-	}
-
-	//build issue body based on operation
-
-	issueBody, err := s.mapIssueToONDCFormat(issue, operation)
-	if err!=nil{
-		return nil,err
-	}
-
-	return map[string]interface{}{
-		"context":ctx,
-		"message":map[string]interface{}{
-			"issue":issueBody,
-		},
-	},nil
-}
-
-func (s *IssueService) mapIssueToONDCFormat(issue *models.Issue, operation string) (map[string]interface{}, error) {
-
-	var images []string
-	if len(issue.Images) > 0 {
-		err := json.Unmarshal(issue.Images, &images)
-		if err != nil {
-
-			return nil, fmt.Errorf("failed to unmarshal images:%w", err)
-		}
-	}
-
-	var orderDetails map[string]interface{}
-	if len(issue.OrderDetails) > 0 {
-		err := json.Unmarshal(issue.OrderDetails, &orderDetails)
-		if err != nil {
-			return nil, fmt.Errorf("failed to unmarshal order detail:%w", err)
-		}
-	}
-	var complaintAction map[string]interface{}
-
-	if len(issue.ComplainantActions) > 0 {
-		err := json.Unmarshal(issue.ComplainantActions, &complaintAction)
-		if err != nil {
-			return nil, fmt.Errorf("failed to unmarshal complaint action:%w", err)
-		}
-	}
-
-	baseIssue := map[string]interface{}{
-		"id":         issue.IssueID,
-		"created_at": issue.CreatedAt.Format(time.RFC3339),
-		"updated_at": issue.UpdatedAt.Format(time.RFC3339),
-	}
-
-	switch operation{
-	case "OPEN":
-		baseIssue["category"]=issue.Category
-		baseIssue["sub-category"]=issue.SubCategory
-		baseIssue["complaint_info"]=map[string]interface{}{
-			"person":map[string]interface{}{
-				"name":issue.UserName,
-			},
-			"contact":map[string]interface{}{
-				"phone":issue.UserPhone,
-				"email":issue.UserEmail,
-			},
-		}
-		baseIssue["order_details"]=orderDetails
-		baseIssue["description"]=map[string]interface{}{
-			"short_desc":issue.DescriptionShort,
-			"long_desc":issue.DescriptionLong,
-			"additional_desc":map[string]interface{}{
-				"url":issue.DescriptionURL,
-				"content_type":issue.DescriptionContentType,
-			},
-			"images":images,
-		}
-		baseIssue["source"]=map[string]interface{}{
-			"network_participant_id":issue.SourceNPID,
-			"type":issue.SourceType,
-		}
-		baseIssue["expected_response_time"]=map[string]interface{}{
-			"duration":issue.ExpectedResponseTime,
-		}
-		baseIssue["expected_resolution_time"]=map[string]interface{}{
-			"duration":issue.ExpectedResolutionTime,
-		}
-		baseIssue["status"]=issue.Status
-		baseIssue["issue_type"]=issue.IssueType
-		baseIssue["issue_actions"]=map[string]interface{}{
-			"complaint_actions":complaintAction,
-		}
-	case "CLOSE":
-		baseIssue["status"]="CLOSED"
-		baseIssue["rating"]=issue.Rating
-		baseIssue["issue_actions"]=map[string]interface{}{
-			"complaint_actions":complaintAction,
-		}
-	case "ESCALATE":
-		baseIssue["status"]=issue.Status
-		baseIssue["issue_type"]=issue.IssueType
-		baseIssue["issue_actions"]=map[string]interface{}{
-			"complaint_actions":complaintAction,
-		}
-	}
-	return baseIssue,nil
-
-}
-//TODO implement proper ONDC signature logic
-func(s *IssueService)createAuthHeader(body []byte)(string,error){
-	return "Signature",nil
 }

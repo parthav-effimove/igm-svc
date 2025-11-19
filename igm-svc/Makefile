@@ -1,5 +1,10 @@
 .PHONY: help  run  docker-up docker-down clean migrate-up migrate-down migrate-version migrate-drop migrate-force migrate-create proto
 
+ifneq (,$(wildcard .env))
+    include .env
+    export
+endif
+
 migrate-up:
 	@./scripts/migrate.sh up
 

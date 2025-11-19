@@ -5,11 +5,11 @@ CREATE TABLE IF NOT EXISTS issues (
     issue_id VARCHAR(255) UNIQUE NOT NULL,
     order_id VARCHAR(255) NOT NULL,
     user_id UUID NOT NULL,
-    transaction_id VARCHAR(255),
+    transaction_id VARCHAR(255),  
     
     -- Network participants
     bpp_id VARCHAR(255),
-    bpp_uri TEXT,
+    bppuri TEXT,  
     
     -- User/Complainant info
     user_name VARCHAR(255),
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS issues (
     images JSONB,
     
     -- Source
-    source_npid VARCHAR(255),
+    source_np_id VARCHAR(255),
     source_type VARCHAR(100),
     
     -- Expected timelines (ISO 8601 duration strings)

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"igm-svc/internal/models"
 
 	"github.com/google/uuid"
@@ -27,6 +28,9 @@ func NewIssueRepository(db *gorm.DB) IssueRepository{
 }
 
 func(r *issueRepository)Create(ctx context.Context,issue *models.Issue)error{
+	if issue==nil{
+		return fmt.Errorf("issue cannot be nil")
+	}
 	return r.db.WithContext(ctx).Create(issue).Error
 }
 
