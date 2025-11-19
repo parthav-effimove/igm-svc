@@ -4,82 +4,84 @@ import (
 	"context"
 	"fmt"
 	"igm-svc/internal/models"
+	"log"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
-type IssueRepository interface{
-	Create(ctx context.Context,issue *models.Issue)error
-	GetByID(ctx context.Context,id uint)(*models.Issue,error)
-	GetByIssueID(ctx context.Context,issueID string)(*models.Issue,error)
-	GetByOrderID(ctx context.Context,orderID string)([]*models.Issue,error)
-	GetByUserID(ctx context.Context,userID uuid.UUID)([]*models.Issue,error)
-	GetByTransactionID(ctx context.Context,transactionID uuid.UUID)([]*models.Issue,error)
-	Update(ctx context.Context, issue *models.Issue)error
+type IssueRepository interface {
+	Create(ctx context.Context, issue *models.Issue) error
+	GetByID(ctx context.Context, id uint) (*models.Issue, error)
+	GetByIssueID(ctx context.Context, issueID string) (*models.Issue, error)
+	GetByOrderID(ctx context.Context, orderID string) ([]*models.Issue, error)
+	GetByUserID(ctx context.Context, userID uuid.UUID) ([]*models.Issue, error)
+	GetByTransactionID(ctx context.Context, transactionID uuid.UUID) ([]*models.Issue, error)
+	Update(ctx context.Context, issue *models.Issue) error
 }
 
-type issueRepository struct{
+type issueRepository struct {
 	db *gorm.DB
 }
 
-func NewIssueRepository(db *gorm.DB) IssueRepository{
-	return &issueRepository{db:db}
+func NewIssueRepository(db *gorm.DB) IssueRepository {
+	return &issueRepository{db: db}
 }
 
-func(r *issueRepository)Create(ctx context.Context,issue *models.Issue)error{
-	if issue==nil{
+func (r *issueRepository) Create(ctx context.Context, issue *models.Issue) error {
+	log.Println("2.reacher Create][issue_repo]")
+	if issue == nil {
 		return fmt.Errorf("issue cannot be nil")
 	}
 	return r.db.WithContext(ctx).Create(issue).Error
 }
 
-func(r *issueRepository)GetByID(ctx context.Context,id uint)(*models.Issue,error){
- var issue models.Issue
- err :=r.db.WithContext(ctx).First(&issue,id).Error
- if err!=nil{
-	return nil,err
- }
- return &issue,nil
-}
-
-func(r *issueRepository)GetByIssueID(ctx context.Context,issueID string)(*models.Issue,error){
+func (r *issueRepository) GetByID(ctx context.Context, id uint) (*models.Issue, error) {
 	var issue models.Issue
-	err:=r.db.WithContext(ctx).Where("issue_id= ?",issueID).First(&issue).Error
-	if err!=nil{
-		return nil,err
+	err := r.db.WithContext(ctx).First(&issue, id).Error
+	if err != nil {
+		return nil, err
 	}
-	return  &issue,nil
+	return &issue, nil
 }
 
-func(r *issueRepository)GetByOrderID(ctx context.Context,orderID string)([]*models.Issue,error){
+func (r *issueRepository) GetByIssueID(ctx context.Context, issueID string) (*models.Issue, error) {
+	var issue models.Issue
+	err := r.db.WithContext(ctx).Where("issue_id= ?", issueID).First(&issue).Error
+	if err != nil {
+		return nil, err
+	}
+	return &issue, nil
+}
+
+func (r *issueRepository) GetByOrderID(ctx context.Context, orderID string) ([]*models.Issue, error) {
 	var issues []*models.Issue
-	err:=r.db.WithContext(ctx).
-		Where("order_id= ?",orderID).
+	err := r.db.WithContext(ctx).
+		Where("order_id= ?", orderID).
 		Order("created_at DESC").
 		Find(&issues).Error
-	return issues,err
+	return issues, err
 
 }
 
-func(r *issueRepository)GetByUserID(ctx context.Context,userID uuid.UUID)([]*models.Issue,error){
+func (r *issueRepository) GetByUserID(ctx context.Context, userID uuid.UUID) ([]*models.Issue, error) {
 	var issues []*models.Issue
-	err:=r.db.WithContext(ctx).
-		Where("order_id= ?",userID).
+	err := r.db.WithContext(ctx).
+		Where("order_id= ?", userID).
 		Order("created_at DESC").
 		Find(&issues).Error
-	return issues,err
+	return issues, err
 }
 
-func(r *issueRepository)GetByTransactionID(ctx context.Context,transactionID uuid.UUID)([]*models.Issue,error){
+func (r *issueRepository) GetByTransactionID(ctx context.Context, transactionID uuid.UUID) ([]*models.Issue, error) {
 	var issues []*models.Issue
-	err:=r.db.WithContext(ctx).
-		Where("order_id= ?",transactionID).
+	err := r.db.WithContext(ctx).
+		Where("order_id= ?", transactionID).
 		Order("created_at DESC").
 		Find(&issues).Error
-	return issues,err
+	return issues, err
 }
 
-func(r *issueRepository)Update(ctx context.Context, issue *models.Issue)error{
+func (r *issueRepository) Update(ctx context.Context, issue *models.Issue) error {
 	return r.db.WithContext(ctx).Save(issue).Error
 }

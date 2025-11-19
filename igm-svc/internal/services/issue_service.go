@@ -42,12 +42,12 @@ func NewIssueService(issueRepo repository.IssueRepository,
 }
 
 func (s *IssueService) CreateIssue(ctx context.Context, req *pb.CreateIssueRequest) (*pb.CreateIssueResponse, error) {
-
+	log.Println("1.reacher CreateIssue [issueservice]")
 	err := s.validateCreateRequest(req)
 	if err != nil {
 		return nil, fmt.Errorf("validation failed :%w", err)
 	}
-
+	log.Println("3.reacher after Create][issue_repo]")
 	userID, err := uuid.Parse(req.UserId)
 	if err != nil {
 		return nil, fmt.Errorf("invalid user_id :%w", err)
@@ -63,7 +63,7 @@ func (s *IssueService) CreateIssue(ctx context.Context, req *pb.CreateIssueReque
 	if err != nil {
 		return nil, fmt.Errorf("failed to build issue:%w", err)
 	}
-
+	
 	err = s.issueRepo.Create(ctx, issue)
 	if err != nil {
 		return nil, fmt.Errorf("failed to save issue :%w", err)
@@ -101,6 +101,7 @@ func (s *IssueService) CreateIssue(ctx context.Context, req *pb.CreateIssueReque
 
 }
 func (s *IssueService) validateCreateRequest(req *pb.CreateIssueRequest) error {
+	
 	if req.UserId == "" {
 		return fmt.Errorf("user_id is required")
 	}
@@ -126,6 +127,7 @@ func (s *IssueService) buildIssueFromRequest(req *pb.CreateIssueRequest,
 	userID uuid.UUID,
 	bppID, bppURI string,
 ) (*models.Issue, error) {
+
 	now := time.Now()
 	issueID := uuid.New().String()
 
@@ -176,6 +178,12 @@ func (s *IssueService) buildIssueFromRequest(req *pb.CreateIssueRequest,
 		return nil, fmt.Errorf("failed to marshal complaint action:%w", err)
 	}
 
+	var descURL, descContentType string
+	if req.AdditionalDesc != nil{
+		descURL = req.AdditionalDesc.Url
+		descContentType = req.AdditionalDesc.ContentType
+	}
+
 	issue := &models.Issue{
 		IssueID:                issueID,
 		OrderID:                req.OrderId,
@@ -189,8 +197,8 @@ func (s *IssueService) buildIssueFromRequest(req *pb.CreateIssueRequest,
 		Status:                 "OPEN",
 		DescriptionShort:       req.Description,
 		DescriptionLong:        req.LongDescription,
-		DescriptionURL:         req.AdditionalDesc.Url,
-		DescriptionContentType: req.AdditionalDesc.ContentType,
+		DescriptionURL:         descURL,
+		DescriptionContentType: descContentType,
 		Images:                 datatypes.JSON(imagesJSON),
 		OrderDetails:           datatypes.JSON(orderDetailsJSON),
 		ComplainantActions:     datatypes.JSON(complaintActionJSON),
@@ -201,11 +209,8 @@ func (s *IssueService) buildIssueFromRequest(req *pb.CreateIssueRequest,
 		CreatedAt:              now,
 		UpdatedAt:              now,
 	}
-
-	if req.AdditionalDesc != nil && req.AdditionalDesc.Url != "" {
-		issue.DescriptionURL = req.AdditionalDesc.Url
-		issue.DescriptionContentType = req.AdditionalDesc.ContentType
-	}
-
+	
+	
+	
 	return issue, nil
 }

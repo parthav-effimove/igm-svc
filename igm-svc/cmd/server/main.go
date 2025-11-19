@@ -10,55 +10,56 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
 	log.Println("[main] starting IGM serivce")
+	_ = godotenv.Load(".env")
 	cfg, err := config.Load()
-	if err!=nil{
-		log.Fatalf("failed to load congig :%v",err)
+	if err != nil {
+		log.Fatalf("failed to load congig :%v", err)
 	}
 
-	db,err:=repository.NewPostgresDB(cfg.DatabaseURL)
-	if err!=nil{
-		log.Fatalf("failed to xonnect to databse:%v",err)
+	db, err := repository.NewPostgresDB(cfg.DatabaseURL)
+	if err != nil {
+		log.Fatalf("failed to xonnect to databse:%v", err)
 	}
 	log.Println("connected to postgres")
-	redisClient,err:=repository.NewRedisClient(cfg.RedisURL)
-	if err!=nil{
-		log.Fatalf("failed to xonnect to redis:%v",err)
+	redisClient, err := repository.NewRedisClient(cfg.RedisURL)
+	if err != nil {
+		log.Fatalf("failed to connect to redis:%v", err)
 	}
 	log.Println("connected to redis")
-	issuRepo:=repository.NewIssueRepository(db)
-	redisRepo:=repository.NewRedisRepository(redisClient)
+	issuRepo := repository.NewIssueRepository(db)
+	redisRepo := repository.NewRedisRepository(redisClient)
 
-	ondcClient :=services.NewOndcClient(cfg.SubscriberID,cfg.BapURI)
+	ondcClient := services.NewOndcClient(cfg.SubscriberID, cfg.BapURI)
 
-
-	serviceConfig:=&services.Config{
+	serviceConfig := &services.Config{
 		SubcriberID: cfg.SubscriberID,
-		BAPURI: cfg.BapURI,
+		BAPURI:      cfg.BapURI,
 	}
 
-	issueService:= services.NewIssueService(issuRepo,redisRepo,ondcClient,serviceConfig)
+	issueService := services.NewIssueService(issuRepo, redisRepo, ondcClient, serviceConfig)
 
-	issueHandler :=handlers.NewIssueHandler(issueService)
+	issueHandler := handlers.NewIssueHandler(issueService)
 
-	grpcServer:=server.NewGRPCServer(cfg.GRPCPort,issueHandler)
+	grpcServer := server.NewGRPCServer(cfg.GRPCPort, issueHandler)
 
-	go func(){
-		sigChan:=make(chan os.Signal,1)
-		signal.Notify(sigChan,os.Interrupt,syscall.SIGTERM)
+	go func() {
+		sigChan := make(chan os.Signal, 1)
+		signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
 		<-sigChan
 
-
-        log.Println("\nReceived shutdown signal")
-        grpcServer.Stop()
-        os.Exit(0)
+		log.Println("\nReceived shutdown signal")
+		grpcServer.Stop()
+		os.Exit(0)
 	}()
 
 	log.Printf("🎯 IGM Service starting on %s", cfg.GRPCPort)
-    if err := grpcServer.Start(); err != nil {
-        log.Fatalf("Failed to start gRPC server: %v", err)
-    }
+	if err := grpcServer.Start(); err != nil {
+		log.Fatalf("Failed to start gRPC server: %v", err)
+	}
 }
