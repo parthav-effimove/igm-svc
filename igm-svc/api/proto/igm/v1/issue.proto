@@ -81,7 +81,7 @@ message CloseIssueRequest{
     string order_id = 3;
     string rating = 4;
     string status = 5; //closed
-    string complainant_act_short_desc = 6;
+    string complaint_act_short_desc = 6;
 }
 
 message CloseIssueResponse{

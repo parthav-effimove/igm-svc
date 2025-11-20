@@ -61,7 +61,11 @@ func (h *IssueHandler) CloseIssue(ctx context.Context, req *pb.CloseIssueRequest
 func (h *IssueHandler) GetIssue(ctx context.Context, req *pb.GetIssueRequest) (*pb.GetIssueResponse, error) {
 	log.Printf("[Handler] GetIssue called for user:%s, order:%s",req.UserId,req.IssueId)
 	resp,err:=h.issueService.GetIssue(ctx,req)
-	return nil, nil
+	if err!=nil{
+		log.Printf("[handler] Get Issues failed :%v",err)
+		return nil,status.Errorf(codes.Internal,"failed to Get Issues issue :%v",err)
+	}
+	return resp, nil
 }
 
 func (h *IssueHandler) ListIssues(ctc context.Context, req *pb.ListIssueRequest) (*pb.ListIssueResponse, error) {

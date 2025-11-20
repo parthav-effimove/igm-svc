@@ -497,15 +497,15 @@ func (x *UpdateIssueResponse) GetOndcMessage() string {
 
 // ++++++++close issue ++++++++++
 type CloseIssueRequest struct {
-	state                   protoimpl.MessageState `protogen:"open.v1"`
-	UserId                  string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	IssueId                 string                 `protobuf:"bytes,2,opt,name=issue_id,json=issueId,proto3" json:"issue_id,omitempty"`
-	OrderId                 string                 `protobuf:"bytes,3,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
-	Rating                  string                 `protobuf:"bytes,4,opt,name=rating,proto3" json:"rating,omitempty"`
-	Status                  string                 `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"` //closed
-	ComplainantActShortDesc string                 `protobuf:"bytes,6,opt,name=complainant_act_short_desc,json=complainantActShortDesc,proto3" json:"complainant_act_short_desc,omitempty"`
-	unknownFields           protoimpl.UnknownFields
-	sizeCache               protoimpl.SizeCache
+	state                 protoimpl.MessageState `protogen:"open.v1"`
+	UserId                string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	IssueId               string                 `protobuf:"bytes,2,opt,name=issue_id,json=issueId,proto3" json:"issue_id,omitempty"`
+	OrderId               string                 `protobuf:"bytes,3,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
+	Rating                string                 `protobuf:"bytes,4,opt,name=rating,proto3" json:"rating,omitempty"`
+	Status                string                 `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"` //closed
+	ComplaintActShortDesc string                 `protobuf:"bytes,6,opt,name=complaint_act_short_desc,json=complaintActShortDesc,proto3" json:"complaint_act_short_desc,omitempty"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
 }
 
 func (x *CloseIssueRequest) Reset() {
@@ -573,9 +573,9 @@ func (x *CloseIssueRequest) GetStatus() string {
 	return ""
 }
 
-func (x *CloseIssueRequest) GetComplainantActShortDesc() string {
+func (x *CloseIssueRequest) GetComplaintActShortDesc() string {
 	if x != nil {
-		return x.ComplainantActShortDesc
+		return x.ComplaintActShortDesc
 	}
 	return ""
 }
@@ -1362,14 +1362,14 @@ const file_api_proto_igm_v1_issue_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\tR\tupdatedAt\x12\x1b\n" +
 	"\tondc_sent\x18\x04 \x01(\bR\bondcSent\x12!\n" +
-	"\fondc_message\x18\x05 \x01(\tR\vondcMessage\"\xcf\x01\n" +
+	"\fondc_message\x18\x05 \x01(\tR\vondcMessage\"\xcb\x01\n" +
 	"\x11CloseIssueRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x19\n" +
 	"\bissue_id\x18\x02 \x01(\tR\aissueId\x12\x19\n" +
 	"\border_id\x18\x03 \x01(\tR\aorderId\x12\x16\n" +
 	"\x06rating\x18\x04 \x01(\tR\x06rating\x12\x16\n" +
-	"\x06status\x18\x05 \x01(\tR\x06status\x12;\n" +
-	"\x1acomplainant_act_short_desc\x18\x06 \x01(\tR\x17complainantActShortDesc\"\xa4\x01\n" +
+	"\x06status\x18\x05 \x01(\tR\x06status\x127\n" +
+	"\x18complaint_act_short_desc\x18\x06 \x01(\tR\x15complaintActShortDesc\"\xa4\x01\n" +
 	"\x12CloseIssueResponse\x12\x19\n" +
 	"\bissue_id\x18\x01 \x01(\tR\aissueId\x12\x16\n" +
 	"\x06status\x18\x02 \x01(\tR\x06status\x12\x1b\n" +

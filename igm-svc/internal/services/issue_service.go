@@ -152,8 +152,6 @@ func (s *IssueService) UpdateIssue(ctx context.Context, req *pb.UpdateIssueReque
 	}, nil
 }
 
-
-
 func (s *IssueService) CloseIssue(ctx context.Context, req *pb.CloseIssueRequest) (*pb.CloseIssueResponse, error) {
 	err := ValidateCloseIssueRequest(req)
 	if err != nil {
@@ -169,14 +167,14 @@ func (s *IssueService) CloseIssue(ctx context.Context, req *pb.CloseIssueRequest
 	issue.Rating = req.Rating
 	issue.UpdatedAt = time.Now()
 
-	if req.ComplainantActShortDesc != "" {
+	if req.ComplaintActShortDesc != "" {
 		var actions []map[string]interface{}
 		if len(issue.ComplainantActions) > 0 {
 			_ = json.Unmarshal(issue.ComplainantActions, &actions)
 		}
 		actions = append(actions, map[string]interface{}{
 			"complainant_action": "CLOSE",
-			"short_desc":         req.ComplainantActShortDesc,
+			"short_desc":         req.ComplaintActShortDesc,
 			"updated_at":         issue.UpdatedAt.Format(time.RFC3339),
 		})
 		actionsJSON, _ := json.Marshal(actions)
@@ -205,5 +203,42 @@ func (s *IssueService) CloseIssue(ctx context.Context, req *pb.CloseIssueRequest
 
 }
 
+func (s *IssueService) GetIssue(ctx context.Context, req *pb.GetIssueRequest) (*pb.GetIssueResponse, error) {
+	if req.IssueId == "" {
+		return nil, fmt.Errorf("missing required field:issue_id")
+	}
+	if req.UserId == "" {
+		return nil, fmt.Errorf("missing required field:user_id")
+	}
+	userId := uuid.MustParse(req.UserId)
+	issue, err := s.issueRepo.GetIssueExistByIssueID(req.IssueId, userId)
+	if err != nil {
+		return nil, err
+	}
 
+	ProtoIssue := &pb.Issue{
+		IssueId: issue.IssueID,
+		OrderId: issue.OrderID,
+		UserId:  req.UserId,
+		TransactionId: issue.TransactionID,
+		Category: issue.Category,
+		SubCategory: issue.SubCategory,
+		IssueType: issue.IssueType,
+		Status: issue.Status,
+		DescriptionShort: issue.DescriptionShort,
+		DescriptionLong: issue.DescriptionLong,
+		ImageUrls: []string{},
+		BppId: issue.BPPID,
+		BppUri: issue.BPPURI,
+		CreatedAt: issue.CreatedAt.Format(time.RFC3339),
+		UpdatedAt: issue.UpdatedAt.Format(time.RFC3339),
+	}
 
+	if len(issue.Images) >0{
+		var imgs []string
+		_=json.Unmarshal(issue.Images,&imgs)
+		ProtoIssue.ImageUrls=imgs
+	}
+	return &pb.GetIssueResponse{Issue: ProtoIssue},nil
+
+}

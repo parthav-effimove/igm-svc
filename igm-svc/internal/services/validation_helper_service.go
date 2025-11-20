@@ -197,7 +197,7 @@ func Contains(slice []string, item string) bool {
 	}
 	return false
 }
-
+	
 // todo validate functions
 func (s *IssueService) ValidateNoActiveIssueExistsWithSameCategory(req *pb.CreateIssueRequest) error {
 	return nil
