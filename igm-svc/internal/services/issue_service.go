@@ -13,6 +13,9 @@ import (
 	pb "igm-svc/api/proto/igm/v1"
 
 	"github.com/google/uuid"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
 	"gorm.io/datatypes"
 )
 
@@ -63,45 +66,43 @@ func (s *IssueService) CreateIssue(ctx context.Context, req *pb.CreateIssueReque
 	if err != nil {
 		return nil, fmt.Errorf("failed to build issue:%w", err)
 	}
-	
+
 	err = s.issueRepo.Create(ctx, issue)
 	if err != nil {
 		return nil, fmt.Errorf("failed to save issue :%w", err)
 	}
 	log.Printf("issue saved to DB :%s", issue.IssueID)
-	ondcSend:=false
-	ondcMessage :=""
+	ondcSend := false
+	ondcMessage := ""
 
 	err = s.OndcClient.SendIssue(ctx, issue, "OPEN")
 	if err != nil {
 		log.Printf("failed to send issue to BPP:%v", err)
 		ondcMessage = fmt.Sprintf("Failed to send to BPP: %v", err)
-	}else{
-		ondcSend=true
-		ondcMessage="Issue sent to BPP successfully"
+	} else {
+		ondcSend = true
+		ondcMessage = "Issue sent to BPP successfully"
 		log.Printf("[Service] Issue sent to ONDC successfully")
-		_=s.redisRepo.SaveIssueResponse(ctx,issue.TransactionID,map[string]interface{}{
-			"action":"issue",
-			"issue_id":issue.IssueID,
-			"timestamp":time.Now().Format(time.RFC3339),
+		_ = s.redisRepo.SaveIssueResponse(ctx, issue.TransactionID, map[string]interface{}{
+			"action":    "issue",
+			"issue_id":  issue.IssueID,
+			"timestamp": time.Now().Format(time.RFC3339),
 		})
 	}
 
 	return &pb.CreateIssueResponse{
-		IssueId: issue.IssueID,
-		OrderId: issue.OrderID,
-		Status: issue.Status,
+		IssueId:       issue.IssueID,
+		OrderId:       issue.OrderID,
+		Status:        issue.Status,
 		TransactionId: issue.TransactionID,
-		CreatedAt: issue.CreatedAt.Format(time.RFC3339),
-		OndcSent: ondcSend,
-		OndcMessage: ondcMessage,
-	},nil
-
-	
+		CreatedAt:     issue.CreatedAt.Format(time.RFC3339),
+		OndcSent:      ondcSend,
+		OndcMessage:   ondcMessage,
+	}, nil
 
 }
 func (s *IssueService) validateCreateRequest(req *pb.CreateIssueRequest) error {
-	
+
 	if req.UserId == "" {
 		return fmt.Errorf("user_id is required")
 	}
@@ -120,7 +121,35 @@ func (s *IssueService) validateCreateRequest(req *pb.CreateIssueRequest) error {
 	if req.Description == "" {
 		return fmt.Errorf("description is required")
 	}
+	if len(req.Items) == 0 {
+		return fmt.Errorf("atleast one item is required")
+	}
+
+	for i, item := range req.Items {
+		if item.Id == "" {
+			return fmt.Errorf("missing item id at index %d", i)
+		}
+		if item.Quantity <= 0 {
+			return fmt.Errorf("invalid quantity of ite, %s", item.Id)
+		}
+	}
+	validCategoies := []string{"ORDER", "FULFILLMENT", "PAYMENT", "ITEM", "AGENT", "CUSTOMER", "TECHNICAL", "VISIBILITY", "POLICY BREACH", "BUSINESS"}
+	if !Contains(validCategoies, req.Category) {
+		return fmt.Errorf("invalid category , must be one of %v", validCategoies)
+	}
+	validIssueTypes := []string{"ISSUE", "GRIEVANCE"}
+	if !Contains(validIssueTypes, req.IssueType) {
+		return fmt.Errorf("invalid issue type , must be one of %v", validIssueTypes)
+	}
 	return nil
+}
+func Contains(slice []string, item string) bool {
+	for _, s := range slice {
+		if s == item {
+			return true
+		}
+	}
+	return false
 }
 
 func (s *IssueService) buildIssueFromRequest(req *pb.CreateIssueRequest,
@@ -179,7 +208,7 @@ func (s *IssueService) buildIssueFromRequest(req *pb.CreateIssueRequest,
 	}
 
 	var descURL, descContentType string
-	if req.AdditionalDesc != nil{
+	if req.AdditionalDesc != nil {
 		descURL = req.AdditionalDesc.Url
 		descContentType = req.AdditionalDesc.ContentType
 	}
@@ -209,61 +238,158 @@ func (s *IssueService) buildIssueFromRequest(req *pb.CreateIssueRequest,
 		CreatedAt:              now,
 		UpdatedAt:              now,
 	}
-	
-	
-	
+
 	return issue, nil
 }
 
-func(s *IssueService)UpdateIssue(ctx context.Context,req *pb.UpdateIssueRequest)(*pb.UpdateIssueResponse,error){
+func (s *IssueService) UpdateIssue(ctx context.Context, req *pb.UpdateIssueRequest) (*pb.UpdateIssueResponse, error) {
+	err := ValidateUpdateIssueRequest(req)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+	//TODO veirfy order data
 
-	issue,err :=s.issueRepo.GetByIssueID(ctx,req.IssueId)
-	if err!=nil{
-		return nil,fmt.Errorf("issue not found:%w",err)
+	issue, err := s.issueRepo.GetByIssueID(ctx, req.IssueId)
+	if err != nil {
+		return nil, fmt.Errorf("issue not found:%w", err)
 	}
 
+	issue.Status = req.Status
+	issue.IssueType = req.IssueType
+	issue.UpdatedAt = time.Now()
+
+	if req.ComplainantActionShortDesc != "" {
+		var actions []map[string]interface{}
+		if len(issue.ComplainantActions) > 0 {
+			_ = json.Unmarshal(issue.ComplainantActions, &actions)
+		}
+		actions = append(actions, map[string]interface{}{
+			"complaint_action": "ESCALATE",
+			"short_desc":       req.ComplainantActionShortDesc,
+			"updated_at":       issue.UpdatedAt.Format(time.RFC3339),
+		})
+		actionsJSON, _ := json.Marshal(actions)
+		issue.ComplainantActions = datatypes.JSON(actionsJSON)
+	}
+
+	err = s.issueRepo.Update(ctx, issue)
+	if err != nil {
+		return nil, fmt.Errorf("failed to update issue:%w", err)
+	}
+
+	ondcSend := false
+	ondcMessage := ""
+	err = s.OndcClient.SendIssue(ctx, issue, "ESCALATE")
+	if err == nil {
+		ondcSend = true
+		ondcMessage = "issue update sent to BPP"
+	}
+	return &pb.UpdateIssueResponse{
+		IssueId:     issue.IssueID,
+		Status:      issue.Status,
+		UpdatedAt:   issue.UpdatedAt.Format(time.RFC3339),
+		OndcSent:    ondcSend,
+		OndcMessage: ondcMessage,
+	}, nil
+}
+
+func ValidateUpdateIssueRequest(req *pb.UpdateIssueRequest) error {
+	if req.UserId == "" {
+		return fmt.Errorf("missing required field: user_id")
+	}
+	if req.IssueId == "" {
+		return fmt.Errorf("missing required field: issue_id")
+	}
+	if req.OrderId == "" {
+		return fmt.Errorf("missing required field: order_id")
+	}
+	if req.Status == "" {
+		return fmt.Errorf("missing required field: status")
+	}
+	if req.IssueType != "" {
+		validIssueTypes := []string{"ISSUE", "GRIEVANCE", "DISPUTE"}
+		if !Contains(validIssueTypes, req.IssueType) {
+			return fmt.Errorf("invalid issue_type. Must be 'ISSUE', 'GRIEVANCE', or 'DISPUTE'")
+		}
+	}
+	return nil
+}
+
+func (s *IssueService) CloseIssue(ctx context.Context,req *pb.CloseIssueRequest)(*pb.CloseIssueResponse,error){
+	err:=ValidateCloseIssueRequest(req)
+	if err!=nil{
+		return nil,status.Errorf(codes.InvalidArgument,err.Error())
+	}
+	//validate order todo
+
+	issue,err:=s.issueRepo.GetByIssueID(ctx,req.IssueId)
+	if err!=nil{
+		return nil,fmt.Errorf("issue not found :%v",err)
+	}
 	issue.Status=req.Status
-	issue.IssueType=req.IssueType
+	issue.Rating=req.Rating
 	issue.UpdatedAt=time.Now()
 
-	if req.ComplaintActionShortDesc!=""{
+	if req.ComplainantActShortDesc!=""{
 		var actions []map[string]interface{}
-		if len(issue.ComplainantActions) >0{
+		if len(issue.ComplainantActions)>0{
 			_=json.Unmarshal(issue.ComplainantActions,&actions)
 		}
 		actions=append(actions, map[string]interface{}{
-			"complaint_action":"ESCALATE",
-			"short_desc":req.ComplaintActionShortDesc,
+			"complainant_action":"CLOSE",
+			"short_desc":req.ComplainantActShortDesc,
 			"updated_at":issue.UpdatedAt.Format(time.RFC3339),
 		})
 		actionsJSON,_:=json.Marshal(actions)
 		issue.ComplainantActions=datatypes.JSON(actionsJSON)
 	}
+	err=s.issueRepo.Update(ctx,issue)
+	if err!=nil{
+		return nil,fmt.Errorf("failed to update the issue :%w",err)
+	}
 
-		err=s.issueRepo.Update(ctx,issue)
-		if err!=nil{
-			return nil,fmt.Errorf("failed to update issue:%w",err)
-		}
+	ondcSent:=false
+	ondcMessage :=""
+	err=s.OndcClient.SendIssue(ctx,issue,"CLOSE")
+	if err==nil{
+		ondcSent=true
+		ondcMessage="issue close send to BPP"
+	}
 
-		ondcSend:=false
-		ondcMessage:=""
-		err=s.OndcClient.SendIssue(ctx,issue,"ESCALATE")
-		if err==nil{
-			ondcSend=true
-			ondcMessage="issue update sent to BPP"
-		}
-		return &pb.UpdateIssueResponse{
-			IssueId: issue.IssueID,
-			Status: issue.Status,
-			UpdatedAt: issue.UpdatedAt.Format(time.RFC3339),
-			OndcSent: ondcSend,
-			OndcMessage: ondcMessage,
-		},nil
+	return &pb.CloseIssueResponse{
+		IssueId: issue.IssueID,
+		Status: issue.Status,
+		ClosedAt: issue.UpdatedAt.Format(time.RFC3339),
+		OndcSent: ondcSent,
+		OndcMessage: ondcMessage,
+	},nil
+
+}
+func ValidateCloseIssueRequest(req *pb.CloseIssueRequest) error {
+	if req.UserId == "" {
+		return fmt.Errorf("missing required field: user_id")
+	}
+	if req.IssueId == "" {
+		return fmt.Errorf("missing required field: issue_id")
+	}
+	if req.OrderId == "" {
+		return fmt.Errorf("missing required field: order_id")
+	}
+	if req.Status == "" {
+		return fmt.Errorf("missing required field: status")
+	}
+	if req.Rating == "" {
+		return fmt.Errorf("missing required field: rating")
+	}
+	validRatings := []string{"THUMBS-UP", "THUMBS-DOWN"}
+	if !Contains(validRatings, req.Rating) {
+		return fmt.Errorf("invalid rating. Must be 'THUMBS-UP' or 'THUMBS-DOWN'")
+	}
+	return nil
 }
 
-//todo validate functions
-func (s *IssueService)ValidateNoActiveIssueExistsWithSameCategory(req *pb.CreateIssueRequest)error{
+// todo validate functions
+func (s *IssueService) ValidateNoActiveIssueExistsWithSameCategory(req *pb.CreateIssueRequest) error {
 	return nil
 
 }
-

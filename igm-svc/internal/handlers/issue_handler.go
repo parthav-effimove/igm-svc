@@ -47,9 +47,15 @@ func (h *IssueHandler) UpdateIssue(ctx context.Context, req *pb.UpdateIssueReque
 	return resp, nil
 }
 
-func (h *IssueHandler) CloseIssue(ctc context.Context, req *pb.CloseIssueRequest) (*pb.CloseIssueResponse, error) {
-	//toto
-	return nil, nil
+func (h *IssueHandler) CloseIssue(ctx context.Context, req *pb.CloseIssueRequest) (*pb.CloseIssueResponse, error) {
+	log.Printf("[Handler] CloseIssue called for user:%s , order:%s ",req.UserId,req.OrderId)
+	resp,err:=h.issueService.CloseIssue(ctx,req)
+	if err!=nil{
+		log.Printf("[handler] Close Issue failed :%v",err)
+		return nil,status.Errorf(codes.Internal,"failed to close issue :%v",err)
+	}
+
+	return resp, nil
 }
 
 func (h *IssueHandler) GetIssue(ctx context.Context, req *pb.GetIssueRequest) (*pb.GetIssueResponse, error) {

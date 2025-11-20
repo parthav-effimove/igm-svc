@@ -63,7 +63,7 @@ message UpdateIssueRequest{
     string order_id = 3;
     string issue_type = 4;
     string status = 5; //new status
-    string complaint_action_short_desc = 6;
+    string complainant_action_short_desc = 6;
 }
 
 message UpdateIssueResponse{
@@ -81,7 +81,7 @@ message CloseIssueRequest{
     string order_id = 3;
     string rating = 4;
     string status = 5; //closed
-    string complaint_act_short_desc = 6;
+    string complainant_act_short_desc = 6;
 }
 
 message CloseIssueResponse{
