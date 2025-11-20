@@ -214,3 +214,56 @@ func (s *IssueService) buildIssueFromRequest(req *pb.CreateIssueRequest,
 	
 	return issue, nil
 }
+
+func(s *IssueService)UpdateIssue(ctx context.Context,req *pb.UpdateIssueRequest)(*pb.UpdateIssueResponse,error){
+
+	issue,err :=s.issueRepo.GetByIssueID(ctx,req.IssueId)
+	if err!=nil{
+		return nil,fmt.Errorf("issue not found:%w",err)
+	}
+
+	issue.Status=req.Status
+	issue.IssueType=req.IssueType
+	issue.UpdatedAt=time.Now()
+
+	if req.ComplaintActionShortDesc!=""{
+		var actions []map[string]interface{}
+		if len(issue.ComplainantActions) >0{
+			_=json.Unmarshal(issue.ComplainantActions,&actions)
+		}
+		actions=append(actions, map[string]interface{}{
+			"complaint_action":"ESCALATE",
+			"short_desc":req.ComplaintActionShortDesc,
+			"updated_at":issue.UpdatedAt.Format(time.RFC3339),
+		})
+		actionsJSON,_:=json.Marshal(actions)
+		issue.ComplainantActions=datatypes.JSON(actionsJSON)
+	}
+
+		err=s.issueRepo.Update(ctx,issue)
+		if err!=nil{
+			return nil,fmt.Errorf("failed to update issue:%w",err)
+		}
+
+		ondcSend:=false
+		ondcMessage:=""
+		err=s.OndcClient.SendIssue(ctx,issue,"ESCALATE")
+		if err==nil{
+			ondcSend=true
+			ondcMessage="issue update sent to BPP"
+		}
+		return &pb.UpdateIssueResponse{
+			IssueId: issue.IssueID,
+			Status: issue.Status,
+			UpdatedAt: issue.UpdatedAt.Format(time.RFC3339),
+			OndcSent: ondcSend,
+			OndcMessage: ondcMessage,
+		},nil
+}
+
+//todo validate functions
+func (s *IssueService)ValidateNoActiveIssueExistsWithSameCategory(req *pb.CreateIssueRequest)error{
+	return nil
+
+}
+

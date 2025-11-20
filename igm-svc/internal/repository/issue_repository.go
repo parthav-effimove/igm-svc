@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"igm-svc/internal/models"
-	"log"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -29,7 +28,7 @@ func NewIssueRepository(db *gorm.DB) IssueRepository {
 }
 
 func (r *issueRepository) Create(ctx context.Context, issue *models.Issue) error {
-	log.Println("2.reacher Create][issue_repo]")
+
 	if issue == nil {
 		return fmt.Errorf("issue cannot be nil")
 	}
@@ -85,3 +84,4 @@ func (r *issueRepository) GetByTransactionID(ctx context.Context, transactionID 
 func (r *issueRepository) Update(ctx context.Context, issue *models.Issue) error {
 	return r.db.WithContext(ctx).Save(issue).Error
 }
+

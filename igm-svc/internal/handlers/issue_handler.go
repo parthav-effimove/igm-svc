@@ -5,6 +5,9 @@ import (
 	pb "igm-svc/api/proto/igm/v1"
 	"igm-svc/internal/services"
 	"log"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type IssueHandler struct {
@@ -12,74 +15,80 @@ type IssueHandler struct {
 	issueService *services.IssueService
 }
 
-func NewIssueHandler(issueService *services.IssueService)*IssueHandler{
+func NewIssueHandler(issueService *services.IssueService) *IssueHandler {
 	return &IssueHandler{
 		issueService: issueService,
 	}
 }
 
-func (h *IssueHandler) CreateIssue(ctx context.Context, req *pb.CreateIssueRequest)(*pb.CreateIssueResponse,error){
-	log.Printf("[Handler] Create Issue called for user:%s, order:%s",req.UserId,req.OrderId)
+func (h *IssueHandler) CreateIssue(ctx context.Context, req *pb.CreateIssueRequest) (*pb.CreateIssueResponse, error) {
+	log.Printf("[Handler] Create Issue called for user:%s, order:%s", req.UserId, req.OrderId)
 
-	resp,err :=h.issueService.CreateIssue(ctx,req)
-	if err!=nil{
-		log.Printf("[Handler] CreateIssue Failed :%v",err)
-		return nil,err
+	resp, err := h.issueService.CreateIssue(ctx, req)
+	if err != nil {
+		log.Printf("[Handler] CreateIssue Failed :%v", err)
+		return nil, err
 	}
 
 	// if isValidationError(err){
 	// return nil, status.Errorf(codes.InvalidArgument, "validation failed: %v", err)}
 	// }
-	log.Printf("[Handler] Create issue sucecces issue_id:%s",resp.IssueId)
-	return resp,nil
+	log.Printf("[Handler] Create issue sucecces issue_id:%s", resp.IssueId)
+	return resp, nil
 }
 
-func(h *IssueHandler) UpdateIssue(ctc context.Context,req *pb.UpdateIssueRequest)(*pb.UpdateIssueResponse,error){
-	//todo
-	return nil,nil
+func (h *IssueHandler) UpdateIssue(ctx context.Context, req *pb.UpdateIssueRequest) (*pb.UpdateIssueResponse, error) {
+	log.Printf("[Handler] UpdateIssue  called for user:%s ,order:%s",req.UserId,req.OrderId)
+	resp,err:=h.issueService.UpdateIssue(ctx,req)
+	if err!=nil{
+		log.Printf("[handler] Update Issue failed:%v",err)
+		return nil,status.Errorf(codes.Internal,"failed to update issue :%v",err)
+	}
+	return resp, nil
 }
 
-func(h *IssueHandler)CloseIssue(ctc context.Context,req *pb.CloseIssueRequest)(*pb.CloseIssueResponse,error){
+func (h *IssueHandler) CloseIssue(ctc context.Context, req *pb.CloseIssueRequest) (*pb.CloseIssueResponse, error) {
 	//toto
-	return nil,nil
+	return nil, nil
 }
 
-func(h *IssueHandler)GetIssue(ctx context.Context,req *pb.GetIssueRequest)(*pb.GetIssueResponse,error){
+func (h *IssueHandler) GetIssue(ctx context.Context, req *pb.GetIssueRequest) (*pb.GetIssueResponse, error) {
 	//todo
-	return nil,nil
+	return nil, nil
 }
 
-func(h *IssueHandler)ListIssues(ctc context.Context,req *pb.ListIssueRequest)(*pb.ListIssueResponse,error){
+func (h *IssueHandler) ListIssues(ctc context.Context, req *pb.ListIssueRequest) (*pb.ListIssueResponse, error) {
 	//todo
-	return nil,nil
+	return nil, nil
 }
 
-func(h *IssueHandler)ListIssueByOrder(ctx context.Context,req *pb.ListIssueByOrderRequest)(*pb.ListIssueResponse,error){
+func (h *IssueHandler) ListIssueByOrder(ctx context.Context, req *pb.ListIssueByOrderRequest) (*pb.ListIssueResponse, error) {
 	//todo
-	return nil,nil
+	return nil, nil
 }
-func(h *IssueHandler)HandleOnIssue(ctx context.Context,req *pb.OnIssueRequest)(*pb.OnIssueResponse,error){
+func (h *IssueHandler) HandleOnIssue(ctx context.Context, req *pb.OnIssueRequest) (*pb.OnIssueResponse, error) {
 	//tofo
-	return nil,nil
+	return nil, nil
 }
-func(h *IssueHandler)HandleOnIssueStatus(ctx context.Context,req *pb.OnIssueStatusRequest)(*pb.OnIssueStatusResponse,error){
+func (h *IssueHandler) HandleOnIssueStatus(ctx context.Context, req *pb.OnIssueStatusRequest) (*pb.OnIssueStatusResponse, error) {
 	//todo
-	return nil,nil
+	return nil, nil
 }
+
 // func isValidationError(err error) bool {
 //     if err == nil {
 //         return false
 //     }
 //     errStr := err.Error()
-//     return contains(errStr, "validation") || 
-//            contains(errStr, "required") || 
+//     return contains(errStr, "validation") ||
+//            contains(errStr, "required") ||
 //            contains(errStr, "invalid")
 // }
 
 // func contains(str, substr string) bool {
-//     return len(str) >= len(substr) && (str == substr || 
-//            len(str) > len(substr) && (str[:len(substr)] == substr || 
-//            str[len(str)-len(substr):] == substr || 
+//     return len(str) >= len(substr) && (str == substr ||
+//            len(str) > len(substr) && (str[:len(substr)] == substr ||
+//            str[len(str)-len(substr):] == substr ||
 //            containsHelper(str, substr)))
 // }
 
