@@ -59,7 +59,8 @@ func (h *IssueHandler) CloseIssue(ctx context.Context, req *pb.CloseIssueRequest
 }
 
 func (h *IssueHandler) GetIssue(ctx context.Context, req *pb.GetIssueRequest) (*pb.GetIssueResponse, error) {
-	//todo
+	log.Printf("[Handler] GetIssue called for user:%s, order:%s",req.UserId,req.IssueId)
+	resp,err:=h.issueService.GetIssue(ctx,req)
 	return nil, nil
 }
 
