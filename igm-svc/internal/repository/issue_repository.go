@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"igm-svc/internal/models"
+	"log"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -18,6 +19,7 @@ type IssueRepository interface {
 	GetByTransactionID(ctx context.Context, transactionID uuid.UUID) ([]*models.Issue, error)
 	Update(ctx context.Context, issue *models.Issue) error
 	GetIssueExistByIssueID(issueID string, userID uuid.UUID)(*models.Issue,error)
+	SaveOnIssueCallback(transactionID ,messageID,payload string)error
 }
 
 type issueRepository struct {
@@ -98,6 +100,12 @@ func (r *issueRepository)GetIssueExistByIssueID(issueID string, userID uuid.UUID
     	}
     	return &issue, nil
 	}
+
+func(r *issueRepository)SaveOnIssueCallback(transactionID ,messageID,payload string)error{
+	//todo
+	log.Printf("Saving on_issue callback: transaction_id=%s, message_id=%s, payload=%s", transactionID, messageID, payload)
+	  return nil
+}
 
 
 	
