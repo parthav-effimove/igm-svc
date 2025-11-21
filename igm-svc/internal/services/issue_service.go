@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"igm-svc/internal/mapper"
 	"igm-svc/internal/repository"
 	"log"
 	"time"
@@ -216,23 +217,7 @@ func (s *IssueService) GetIssue(ctx context.Context, req *pb.GetIssueRequest) (*
 		return nil, err
 	}
 
-	ProtoIssue := &pb.Issue{
-		IssueId: issue.IssueID,
-		OrderId: issue.OrderID,
-		UserId:  req.UserId,
-		TransactionId: issue.TransactionID,
-		Category: issue.Category,
-		SubCategory: issue.SubCategory,
-		IssueType: issue.IssueType,
-		Status: issue.Status,
-		DescriptionShort: issue.DescriptionShort,
-		DescriptionLong: issue.DescriptionLong,
-		ImageUrls: []string{},
-		BppId: issue.BPPID,
-		BppUri: issue.BPPURI,
-		CreatedAt: issue.CreatedAt.Format(time.RFC3339),
-		UpdatedAt: issue.UpdatedAt.Format(time.RFC3339),
-	}
+	ProtoIssue := mapper.ToProtoIssue(issue)
 
 	if len(issue.Images) >0{
 		var imgs []string
@@ -264,32 +249,7 @@ func (s *IssueService)GetIssuesByUser(ctx context.Context,req *pb.ListIssueReque
 		return nil,err
 	}
 
-	protoIssues:=make([]*pb.Issue,0,len(issues))
-	for _,issue:=range issues{
-		protoIssue := &pb.Issue{
-            IssueId:      issue.IssueID,
-            OrderId:      issue.OrderID,
-            UserId:       issue.UserID.String(),
-            TransactionId: issue.TransactionID,
-            Category:     issue.Category,
-            SubCategory:  issue.SubCategory,
-            IssueType:    issue.IssueType,
-            Status:       issue.Status,
-            DescriptionShort: issue.DescriptionShort,
-            DescriptionLong:  issue.DescriptionLong,
-            ImageUrls:    []string{},
-            BppId:        issue.BPPID,
-            BppUri:       issue.BPPURI,
-            CreatedAt:    issue.CreatedAt.Format(time.RFC3339),
-            UpdatedAt:    issue.UpdatedAt.Format(time.RFC3339),
-        }
-        if len(issue.Images) > 0 {
-            var imgs []string
-            _ = json.Unmarshal(issue.Images, &imgs)
-            protoIssue.ImageUrls = imgs
-        }
-        protoIssues = append(protoIssues, protoIssue)
-	}
+	protoIssues:=mapper.ToProtoIssues(issues)
 
 	return &pb.ListIssueResponse{
 		Issues: protoIssues,
@@ -298,4 +258,23 @@ func (s *IssueService)GetIssuesByUser(ctx context.Context,req *pb.ListIssueReque
 		PageSizee: req.PageSize,
 	},nil
 
+}
+
+func(s *IssueService)GetIssueByOrder(ctx context.Context,req *pb.ListIssueByOrderRequest)(*pb.ListIssueResponse,error){
+	if req.UserId==""{
+		return nil,fmt.Errorf("required field is missing:user_id")
+	}
+	if req.OrderId==""{
+		return nil,fmt.Errorf("missing required fiels: order_id")
+	}
+	issues,err:=s.issueRepo.GetByOrderID(ctx,req.OrderId)
+	if err!=nil{
+		return nil,err
+	}
+	protoIssues:=mapper.ToProtoIssues(issues)
+	return &pb.ListIssueResponse{
+		Issues: protoIssues,
+	},nil
+
+	
 }

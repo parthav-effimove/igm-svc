@@ -79,8 +79,13 @@ func (h *IssueHandler) ListIssues(ctc context.Context, req *pb.ListIssueRequest)
 }
 
 func (h *IssueHandler) ListIssueByOrder(ctx context.Context, req *pb.ListIssueByOrderRequest) (*pb.ListIssueResponse, error) {
-	//todo
-	return nil, nil
+	log.Printf("[Handler] ListIssueByOrder called by user :%s for order:%s",req.UserId,req.OrderId)
+	resp,err:=h.issueService.GetIssueByOrder(ctx,req)
+	if err != nil {
+		log.Printf("[handler] Get Issues by Order failed :%v", err)
+		return nil, status.Errorf(codes.Internal, "failed to Get Issues for order :%v", err)
+	}
+	return resp, nil
 }
 func (h *IssueHandler) HandleOnIssue(ctx context.Context, req *pb.OnIssueRequest) (*pb.OnIssueResponse, error) {
 	//tofo

@@ -66,11 +66,16 @@ func (r *issueRepository) GetByOrderID(ctx context.Context, orderID string) ([]*
 
 func (r *issueRepository) GetByUserID(ctx context.Context, userID uuid.UUID, limit int, offset int) ([]*models.Issue,int, error) {
 	var issues []*models.Issue
-	err := r.db.WithContext(ctx).
+	var total int64
+	err:=r.db.Model(&models.Issue{}).Where("user_id=?",userID).Count(&total).Error
+	if err!=nil{
+		return nil,0,err
+	}
+	err = r.db.WithContext(ctx).
 		Where("user_id= ?", userID).
-		Order("created_at DESC").
+		Limit(limit).Offset(offset).
 		Find(&issues).Error
-	return issues,0, err
+	return issues,int(total), err
 }
 
 func (r *issueRepository) GetByTransactionID(ctx context.Context, transactionID uuid.UUID) ([]*models.Issue, error) {
