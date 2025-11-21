@@ -14,7 +14,7 @@ type IssueRepository interface {
 	GetByID(ctx context.Context, id uint) (*models.Issue, error)
 	GetByIssueID(ctx context.Context, issueID string) (*models.Issue, error)
 	GetByOrderID(ctx context.Context, orderID string) ([]*models.Issue, error)
-	GetByUserID(ctx context.Context, userID uuid.UUID) ([]*models.Issue, error)
+	GetByUserID(ctx context.Context, userID uuid.UUID, limit int, offset int) ([]*models.Issue,int,error)
 	GetByTransactionID(ctx context.Context, transactionID uuid.UUID) ([]*models.Issue, error)
 	Update(ctx context.Context, issue *models.Issue) error
 	GetIssueExistByIssueID(issueID string, userID uuid.UUID)(*models.Issue,error)
@@ -64,13 +64,13 @@ func (r *issueRepository) GetByOrderID(ctx context.Context, orderID string) ([]*
 
 }
 
-func (r *issueRepository) GetByUserID(ctx context.Context, userID uuid.UUID) ([]*models.Issue, error) {
+func (r *issueRepository) GetByUserID(ctx context.Context, userID uuid.UUID, limit int, offset int) ([]*models.Issue,int, error) {
 	var issues []*models.Issue
 	err := r.db.WithContext(ctx).
-		Where("user_id_id= ?", userID).
+		Where("user_id= ?", userID).
 		Order("created_at DESC").
 		Find(&issues).Error
-	return issues, err
+	return issues,0, err
 }
 
 func (r *issueRepository) GetByTransactionID(ctx context.Context, transactionID uuid.UUID) ([]*models.Issue, error) {
@@ -94,3 +94,5 @@ func (r *issueRepository)GetIssueExistByIssueID(issueID string, userID uuid.UUID
     	return &issue, nil
 	}
 
+
+	

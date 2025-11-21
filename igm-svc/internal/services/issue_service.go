@@ -242,3 +242,60 @@ func (s *IssueService) GetIssue(ctx context.Context, req *pb.GetIssueRequest) (*
 	return &pb.GetIssueResponse{Issue: ProtoIssue},nil
 
 }
+func (s *IssueService)GetIssuesByUser(ctx context.Context,req *pb.ListIssueRequest)(*pb.ListIssueResponse,error){
+	if req.UserId==""{
+		return nil, fmt.Errorf("missing required fields: user_id")
+	}
+	if req.PageSize==0{
+		req.PageSize=10
+	}
+	if req.Page<=0{
+		req.Page=1
+	}
+
+	userID, err:=uuid.Parse(req.UserId)
+	if err != nil {
+        return nil, fmt.Errorf("invalid user_id")
+    }
+
+	offset:=(int(req.Page)-1)*int(req.PageSize)
+	issues, total ,err:= s.issueRepo.GetByUserID(ctx,userID,int(req.PageSize),offset)
+	if err!=nil{
+		return nil,err
+	}
+
+	protoIssues:=make([]*pb.Issue,0,len(issues))
+	for _,issue:=range issues{
+		protoIssue := &pb.Issue{
+            IssueId:      issue.IssueID,
+            OrderId:      issue.OrderID,
+            UserId:       issue.UserID.String(),
+            TransactionId: issue.TransactionID,
+            Category:     issue.Category,
+            SubCategory:  issue.SubCategory,
+            IssueType:    issue.IssueType,
+            Status:       issue.Status,
+            DescriptionShort: issue.DescriptionShort,
+            DescriptionLong:  issue.DescriptionLong,
+            ImageUrls:    []string{},
+            BppId:        issue.BPPID,
+            BppUri:       issue.BPPURI,
+            CreatedAt:    issue.CreatedAt.Format(time.RFC3339),
+            UpdatedAt:    issue.UpdatedAt.Format(time.RFC3339),
+        }
+        if len(issue.Images) > 0 {
+            var imgs []string
+            _ = json.Unmarshal(issue.Images, &imgs)
+            protoIssue.ImageUrls = imgs
+        }
+        protoIssues = append(protoIssues, protoIssue)
+	}
+
+	return &pb.ListIssueResponse{
+		Issues: protoIssues,
+		TotalCount: int32(total),
+		Page: req.Page,
+		PageSizee: req.PageSize,
+	},nil
+
+}

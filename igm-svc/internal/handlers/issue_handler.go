@@ -38,39 +38,44 @@ func (h *IssueHandler) CreateIssue(ctx context.Context, req *pb.CreateIssueReque
 }
 
 func (h *IssueHandler) UpdateIssue(ctx context.Context, req *pb.UpdateIssueRequest) (*pb.UpdateIssueResponse, error) {
-	log.Printf("[Handler] UpdateIssue  called for user:%s ,order:%s",req.UserId,req.OrderId)
-	resp,err:=h.issueService.UpdateIssue(ctx,req)
-	if err!=nil{
-		log.Printf("[handler] Update Issue failed:%v",err)
-		return nil,status.Errorf(codes.Internal,"failed to update issue :%v",err)
+	log.Printf("[Handler] UpdateIssue  called for user:%s ,order:%s", req.UserId, req.OrderId)
+	resp, err := h.issueService.UpdateIssue(ctx, req)
+	if err != nil {
+		log.Printf("[handler] Update Issue failed:%v", err)
+		return nil, status.Errorf(codes.Internal, "failed to update issue :%v", err)
 	}
 	return resp, nil
 }
 
 func (h *IssueHandler) CloseIssue(ctx context.Context, req *pb.CloseIssueRequest) (*pb.CloseIssueResponse, error) {
-	log.Printf("[Handler] CloseIssue called for user:%s , order:%s ",req.UserId,req.OrderId)
-	resp,err:=h.issueService.CloseIssue(ctx,req)
-	if err!=nil{
-		log.Printf("[handler] Close Issue failed :%v",err)
-		return nil,status.Errorf(codes.Internal,"failed to close issue :%v",err)
+	log.Printf("[Handler] CloseIssue called for user:%s , order:%s ", req.UserId, req.OrderId)
+	resp, err := h.issueService.CloseIssue(ctx, req)
+	if err != nil {
+		log.Printf("[handler] Close Issue failed :%v", err)
+		return nil, status.Errorf(codes.Internal, "failed to close issue :%v", err)
 	}
 
 	return resp, nil
 }
 
 func (h *IssueHandler) GetIssue(ctx context.Context, req *pb.GetIssueRequest) (*pb.GetIssueResponse, error) {
-	log.Printf("[Handler] GetIssue called for user:%s, order:%s",req.UserId,req.IssueId)
-	resp,err:=h.issueService.GetIssue(ctx,req)
-	if err!=nil{
-		log.Printf("[handler] Get Issues failed :%v",err)
-		return nil,status.Errorf(codes.Internal,"failed to Get Issues issue :%v",err)
+	log.Printf("[Handler] GetIssue called for user:%s, order:%s", req.UserId, req.IssueId)
+	resp, err := h.issueService.GetIssue(ctx, req)
+	if err != nil {
+		log.Printf("[handler] Get Issues failed :%v", err)
+		return nil, status.Errorf(codes.Internal, "failed to Get Issues issue :%v", err)
 	}
 	return resp, nil
 }
 
 func (h *IssueHandler) ListIssues(ctc context.Context, req *pb.ListIssueRequest) (*pb.ListIssueResponse, error) {
-	//todo
-	return nil, nil
+	log.Printf("[Handler] ListIssue called by user:%s", req.UserId)
+	resp, err := h.issueService.GetIssuesByUser(ctc, req)
+	if err != nil {
+		log.Printf("[Handler ListIssues failed:%v]", err)
+		return nil, status.Errorf(codes.Internal, "failed to List Issue for user :%v", err)
+	}
+	return resp, nil
 }
 
 func (h *IssueHandler) ListIssueByOrder(ctx context.Context, req *pb.ListIssueByOrderRequest) (*pb.ListIssueResponse, error) {
