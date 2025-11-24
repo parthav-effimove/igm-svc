@@ -87,15 +87,6 @@ func (h *IssueHandler) ListIssueByOrder(ctx context.Context, req *pb.ListIssueBy
 	}
 	return resp, nil
 }
-func (h *IssueHandler) HandleOnIssue(ctx context.Context, req *pb.OnIssueRequest) (*pb.OnIssueResponse, error) {
-		log.Printf("[ONDC] Received in_issue callback: transaction_id=%s,message_id:=%s",req.TransactionId,req.MessageId)
-
-	return nil, nil
-}
-func (h *IssueHandler) HandleOnIssueStatus(ctx context.Context, req *pb.OnIssueStatusRequest) (*pb.OnIssueStatusResponse, error) {
-	//todo
-	return nil, nil
-}
 
 // func isValidationError(err error) bool {
 //     if err == nil {

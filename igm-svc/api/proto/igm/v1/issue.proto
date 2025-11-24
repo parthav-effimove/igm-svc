@@ -123,11 +123,79 @@ message ListIssueResponse{
 
 //+++++++ ONDC callback ++++++
 
+message Context{
+    string domain = 1;
+    string action = 2;
+    string bap_id = 3;
+    string bpp_id = 4;
+    string transaction_id = 5;
+    string message_id = 6;
+}
+message Org { string name = 1;}
+
+message Contact { 
+    string phone = 1;
+    string email = 2;
+}
+
+message Person { string name = 1;}
+
+message UpdatedBy{
+    Org org = 1;
+    Contact contact = 2;
+    Person person = 3;
+}
+
+message RespondentAction {
+    string respondent_action = 1;
+    string short_desc = 2;
+    string updated_at = 3;
+    UpdatedBy updated_by = 4;
+    int32 cascaded_level = 5;
+}
+
+message IssueActions {
+  repeated RespondentAction respondent_actions = 1;
+}
+
+message ResolutionProviderInfo{
+    string type = 1;
+    Org org = 2;
+    Contact contact = 3;
+    Person person = 4;
+}
+
+message ResolutionProvider{
+    ResolutionProviderInfo respondent_info = 1;
+}
+
+message Resolution {
+    string short_desc = 1;
+    string long_desc = 2;
+    string action_triggered = 3;
+    string refund_amount = 4;
+}
+
+message Issue{
+    string id = 1;
+    IssueActions issue_actions = 2;
+    ResolutionProvider resolution_provider = 3;
+    Resolution resolution = 4;
+
+}
+message OnIssuePayload {
+  Context context = 1;
+  Issue issue = 2;
+}
+
 message OnIssueRequest{
     string transaction_id = 1;
     string message_id = 2;
-    string payload = 3;
+
+    OnIssuePayload  payload = 10;
 }
+
+
 
 message OnIssueResponse{
     string status = 1;
