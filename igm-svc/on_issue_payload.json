@@ -1,0 +1,26 @@
+{
+  "transaction_id": "tx-123",
+  "message_id": "msg-123",
+  "payload": {
+    "context": {
+      "domain": "igm",
+      "action": "on_issue",
+      "bap_id": "bap-1",
+      "bpp_id": "bpp-1",
+      "transaction_id": "tx-123",
+      "message_id": "msg-123"
+    },
+    "issue": {
+      "id": "issue-1",
+      "issue_actions": {
+        "respondent_actions": [
+          {
+            "respondent_action": "UPDATE",
+            "short_desc": "status updated",
+            "updated_at": "2025-11-24T15:00:00Z"
+          }
+        ]
+      }
+    }
+  }
+}

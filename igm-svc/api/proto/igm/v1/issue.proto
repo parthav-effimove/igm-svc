@@ -176,7 +176,7 @@ message Resolution {
     string refund_amount = 4;
 }
 
-message Issue{
+message IncomingIssue{
     string id = 1;
     IssueActions issue_actions = 2;
     ResolutionProvider resolution_provider = 3;
@@ -185,7 +185,7 @@ message Issue{
 }
 message OnIssuePayload {
   Context context = 1;
-  Issue issue = 2;
+  IncomingIssue issue = 2;
 }
 
 message OnIssueRequest{

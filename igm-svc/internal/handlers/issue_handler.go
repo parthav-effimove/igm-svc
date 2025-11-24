@@ -13,11 +13,13 @@ import (
 type IssueHandler struct {
 	pb.UnimplementedIssueServiceServer
 	issueService *services.IssueService
+	onIssueService *services.OnIssueService
 }
 
-func NewIssueHandler(issueService *services.IssueService) *IssueHandler {
+func NewIssueHandler(issueService *services.IssueService, onIssueService *services.OnIssueService) *IssueHandler {
 	return &IssueHandler{
 		issueService: issueService,
+		onIssueService: onIssueService,
 	}
 }
 
