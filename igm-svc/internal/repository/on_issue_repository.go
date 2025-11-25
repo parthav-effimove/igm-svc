@@ -7,55 +7,85 @@ import (
 	"log"
 	"time"
 
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 
 type OnIssueRepository interface {
-	SaveOnIssueCallback(ctx context.Context,transactionID, messageID string, payload []byte) error
+	SaveOnIssueCallback(ctx context.Context, transactionID, messageID string, payload []byte) error
 	UpdateIssueFromOnIssue(ctx context.Context, issueID string, updates map[string]interface{}) error
+	SaveOnIssueStatusResponse(ctx context.Context, row *models.OnIssueStatusResponse) error
 }
 
-type onIssueRepository struct{
+type onIssueRepository struct {
 	db *gorm.DB
 }
 
-func NewOnIssueRepository(db *gorm.DB)OnIssueRepository{
+func NewOnIssueRepository(db *gorm.DB) OnIssueRepository {
 	return &onIssueRepository{db: db}
 }
 
-func (r *onIssueRepository) SaveOnIssueCallback(ctx context.Context,transactionID, messageID string, payload []byte) error {
-	//todo - integrate with dedicated logging service.
+func (r *onIssueRepository) SaveOnIssueCallback(ctx context.Context, transactionID, messageID string, payload []byte) error {
+	entry := models.OndcCallback{
+		TransactionID: transactionID,
+		MessageID:     messageID,
+		Payload:       datatypes.JSON(payload),
+		CreatedAt:     time.Now(),
+	}
+	if err := r.db.WithContext(ctx).Create(&entry).Error; err != nil {
+		return fmt.Errorf("failed to save ondc callback: %w", err)
+	}
 	log.Printf("Saving on_issue callback: transaction_id=%s, message_id=%s, payload=%s", transactionID, messageID, payload)
 	return nil
 }
 
-func (r *onIssueRepository) UpdateIssueFromOnIssue(ctx context.Context, issueID string, updates map[string]interface{}) error{
-	if issueID ==""{
+func (r *onIssueRepository) UpdateIssueFromOnIssue(ctx context.Context, issueID string, updates map[string]interface{}) error {
+	if issueID == "" {
 		return fmt.Errorf("empty issue id")
 	}
-	if len(updates)==0{
+	if len(updates) == 0 {
 		return nil
 	}
 
-	if _, ok :=updates["updated_at"]; !ok{
-		updates["updated_at"]=time.Now()
+	if _, ok := updates["updated_at"]; !ok {
+		updates["updated_at"] = time.Now()
 	}
 
-	tx:=r.db.WithContext(ctx).Begin()
+	tx := r.db.WithContext(ctx).Begin()
 
-	if tx.Error !=nil{
-		return fmt.Errorf("failed to begin transaction :%w",tx.Error)
+	if tx.Error != nil {
+		return fmt.Errorf("failed to begin transaction :%w", tx.Error)
 	}
 
-	err:=tx.Model(&models.Issue{}).Where("issue_id = ?",issueID).Updates(updates).Error
-	if err!=nil{
-		_=tx.Rollback()
-		return fmt.Errorf("failed to update issue:%w",err)
+	err := tx.Model(&models.Issue{}).Where("issue_id = ?", issueID).Updates(updates).Error
+	if err != nil {
+		_ = tx.Rollback()
+		return fmt.Errorf("failed to update issue:%w", err)
 	}
-	err=tx.Commit().Error
-	if err!=nil{
-		return fmt.Errorf("failed to commit issue update:%w",err)
+	err = tx.Commit().Error
+	if err != nil {
+		return fmt.Errorf("failed to commit issue update:%w", err)
 	}
 	return nil
 }
 
+func (r *onIssueRepository) SaveOnIssueStatusResponse(ctx context.Context, row *models.OnIssueStatusResponse) error{
+	if row == nil {
+		return fmt.Errorf("nil OnIssueStatusResponse row")
+	}
+	if row.IssueID == "" {
+		return fmt.Errorf("missing issue_id in OnIssueStatusResponse")
+	}
+
+	
+	if row.CreatedAt.IsZero() {
+		row.CreatedAt = time.Now()
+	}
+
+	
+	if err := r.db.WithContext(ctx).Create(row).Error; err != nil {
+		return fmt.Errorf("failed to insert on_issue_status_response: %w", err)
+	}
+
+	return nil
+}
