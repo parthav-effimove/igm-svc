@@ -871,7 +871,7 @@ type ListIssueResponse struct {
 	Issues        []*Issue               `protobuf:"bytes,1,rep,name=issues,proto3" json:"issues,omitempty"`
 	TotalCount    int32                  `protobuf:"varint,2,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
 	Page          int32                  `protobuf:"varint,3,opt,name=page,proto3" json:"page,omitempty"`
-	PageSizee     int32                  `protobuf:"varint,4,opt,name=page_sizee,json=pageSizee,proto3" json:"page_sizee,omitempty"`
+	PageSize      int32                  `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -927,9 +927,9 @@ func (x *ListIssueResponse) GetPage() int32 {
 	return 0
 }
 
-func (x *ListIssueResponse) GetPageSizee() int32 {
+func (x *ListIssueResponse) GetPageSize() int32 {
 	if x != nil {
-		return x.PageSizee
+		return x.PageSize
 	}
 	return 0
 }
@@ -2091,14 +2091,13 @@ const file_api_proto_igm_v1_issue_proto_rawDesc = "" +
 	"\tpage_size\x18\x03 \x01(\x05R\bpageSize\"M\n" +
 	"\x17ListIssueByOrderRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x19\n" +
-	"\border_id\x18\x02 \x01(\tR\aorderId\"\x8e\x01\n" +
+	"\border_id\x18\x02 \x01(\tR\aorderId\"\x8c\x01\n" +
 	"\x11ListIssueResponse\x12%\n" +
 	"\x06issues\x18\x01 \x03(\v2\r.igm.v1.IssueR\x06issues\x12\x1f\n" +
 	"\vtotal_count\x18\x02 \x01(\x05R\n" +
 	"totalCount\x12\x12\n" +
-	"\x04page\x18\x03 \x01(\x05R\x04page\x12\x1d\n" +
-	"\n" +
-	"page_sizee\x18\x04 \x01(\x05R\tpageSizee\"\xad\x01\n" +
+	"\x04page\x18\x03 \x01(\x05R\x04page\x12\x1b\n" +
+	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\"\xad\x01\n" +
 	"\aContext\x12\x16\n" +
 	"\x06domain\x18\x01 \x01(\tR\x06domain\x12\x16\n" +
 	"\x06action\x18\x02 \x01(\tR\x06action\x12\x15\n" +

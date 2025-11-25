@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS issues (
     
     -- Network participants
     bpp_id VARCHAR(255),
-    bppuri TEXT,  
+    bpp_uri TEXT,  
     
     -- User/Complainant info
     user_name VARCHAR(255),
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS issues (
     images JSONB,
     
     -- Source
-    source_np_id VARCHAR(255),
+    source_npid VARCHAR(255),
     source_type VARCHAR(100),
     
     -- Expected timelines (ISO 8601 duration strings)
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS issues (
     deleted_at TIMESTAMP
 );
 
--- Indexes for fast lookups
+
 CREATE INDEX idx_issues_issue_id ON issues(issue_id);
 CREATE INDEX idx_issues_order_id ON issues(order_id);
 CREATE INDEX idx_issues_user_id ON issues(user_id);
@@ -64,7 +64,7 @@ CREATE INDEX idx_issues_status ON issues(status);
 CREATE INDEX idx_issues_deleted_at ON issues(deleted_at);
 CREATE INDEX idx_issues_created_at ON issues(created_at);
 
--- Comment for documentation
+
 COMMENT ON TABLE issues IS 'Stores IGM (Issue and Grievance Management) issues from ONDC network';
 COMMENT ON COLUMN issues.issue_id IS 'ONDC unique issue identifier (IssueBody.ID)';
 COMMENT ON COLUMN issues.transaction_id IS 'ONDC transaction ID linking all related actions';

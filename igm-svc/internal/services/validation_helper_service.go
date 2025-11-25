@@ -87,9 +87,9 @@ func (s *IssueService) buildIssueFromRequest(req *pb.CreateIssueRequest,
 	}
 
 	complaintAction := map[string]interface{}{
-		"complaint_action": "OPEN",
-		"short_desc":       req.Description,
-		"updated_at":       now.Format(time.RFC3339),
+		"complainant_action": "OPEN",
+		"short_desc":         req.Description,
+		"updated_at":         now.Format(time.RFC3339),
 		"updated_by": map[string]interface{}{
 			"org": map[string]interface{}{
 				"name": s.config.SubcriberID,

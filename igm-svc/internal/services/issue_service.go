@@ -219,62 +219,61 @@ func (s *IssueService) GetIssue(ctx context.Context, req *pb.GetIssueRequest) (*
 
 	ProtoIssue := mapper.ToProtoIssue(issue)
 
-	if len(issue.Images) >0{
+	if len(issue.Images) > 0 {
 		var imgs []string
-		_=json.Unmarshal(issue.Images,&imgs)
-		ProtoIssue.ImageUrls=imgs
+		_ = json.Unmarshal(issue.Images, &imgs)
+		ProtoIssue.ImageUrls = imgs
 	}
-	return &pb.GetIssueResponse{Issue: ProtoIssue},nil
+	return &pb.GetIssueResponse{Issue: ProtoIssue}, nil
 
 }
-func (s *IssueService)GetIssuesByUser(ctx context.Context,req *pb.ListIssueRequest)(*pb.ListIssueResponse,error){
-	if req.UserId==""{
+func (s *IssueService) GetIssuesByUser(ctx context.Context, req *pb.ListIssueRequest) (*pb.ListIssueResponse, error) {
+	if req.UserId == "" {
 		return nil, fmt.Errorf("missing required fields: user_id")
 	}
-	if req.PageSize==0{
-		req.PageSize=10
+	if req.PageSize == 0 {
+		req.PageSize = 10
 	}
-	if req.Page<=0{
-		req.Page=1
+	if req.Page <= 0 {
+		req.Page = 1
 	}
 
-	userID, err:=uuid.Parse(req.UserId)
+	userID, err := uuid.Parse(req.UserId)
 	if err != nil {
-        return nil, fmt.Errorf("invalid user_id")
-    }
-
-	offset:=(int(req.Page)-1)*int(req.PageSize)
-	issues, total ,err:= s.issueRepo.GetByUserID(ctx,userID,int(req.PageSize),offset)
-	if err!=nil{
-		return nil,err
+		return nil, fmt.Errorf("invalid user_id")
 	}
 
-	protoIssues:=mapper.ToProtoIssues(issues)
+	offset := (int(req.Page) - 1) * int(req.PageSize)
+	issues, total, err := s.issueRepo.GetByUserID(ctx, userID, int(req.PageSize), offset)
+	if err != nil {
+		return nil, err
+	}
+
+	protoIssues := mapper.ToProtoIssues(issues)
 
 	return &pb.ListIssueResponse{
-		Issues: protoIssues,
+		Issues:     protoIssues,
 		TotalCount: int32(total),
-		Page: req.Page,
-		PageSizee: req.PageSize,
-	},nil
+		Page:       req.Page,
+		PageSize:   req.PageSize,
+	}, nil
 
 }
 
-func(s *IssueService)GetIssueByOrder(ctx context.Context,req *pb.ListIssueByOrderRequest)(*pb.ListIssueResponse,error){
-	if req.UserId==""{
-		return nil,fmt.Errorf("required field is missing:user_id")
+func (s *IssueService) GetIssueByOrder(ctx context.Context, req *pb.ListIssueByOrderRequest) (*pb.ListIssueResponse, error) {
+	if req.UserId == "" {
+		return nil, fmt.Errorf("required field is missing:user_id")
 	}
-	if req.OrderId==""{
-		return nil,fmt.Errorf("missing required fiels: order_id")
+	if req.OrderId == "" {
+		return nil, fmt.Errorf("missing required fiels: order_id")
 	}
-	issues,err:=s.issueRepo.GetByOrderID(ctx,req.OrderId)
-	if err!=nil{
-		return nil,err
+	issues, err := s.issueRepo.GetByOrderID(ctx, req.OrderId)
+	if err != nil {
+		return nil, err
 	}
-	protoIssues:=mapper.ToProtoIssues(issues)
+	protoIssues := mapper.ToProtoIssues(issues)
 	return &pb.ListIssueResponse{
 		Issues: protoIssues,
-	},nil
+	}, nil
 
-	
 }

@@ -118,7 +118,7 @@ message ListIssueResponse{
     repeated Issue issues = 1;
     int32 total_count = 2;
     int32 page = 3;
-    int32 page_sizee = 4;
+    int32 page_size = 4;
 }
 
 //+++++++ ONDC callback ++++++
