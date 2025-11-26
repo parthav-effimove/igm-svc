@@ -1294,16 +1294,85 @@ func (x *RespondentAction) GetCascadedLevel() int32 {
 	return 0
 }
 
-type IssueActions struct {
+type ComplainantAction struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
-	RespondentActions []*RespondentAction    `protobuf:"bytes,1,rep,name=respondent_actions,json=respondentActions,proto3" json:"respondent_actions,omitempty"`
+	ComplainantAction string                 `protobuf:"bytes,1,opt,name=complainant_action,json=complainantAction,proto3" json:"complainant_action,omitempty"`
+	ShortDesc         string                 `protobuf:"bytes,2,opt,name=short_desc,json=shortDesc,proto3" json:"short_desc,omitempty"`
+	UpdatedAt         string                 `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	UpdatedBy         *UpdatedBy             `protobuf:"bytes,4,opt,name=updated_by,json=updatedBy,proto3" json:"updated_by,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
 
+func (x *ComplainantAction) Reset() {
+	*x = ComplainantAction{}
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ComplainantAction) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ComplainantAction) ProtoMessage() {}
+
+func (x *ComplainantAction) ProtoReflect() protoreflect.Message {
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ComplainantAction.ProtoReflect.Descriptor instead.
+func (*ComplainantAction) Descriptor() ([]byte, []int) {
+	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *ComplainantAction) GetComplainantAction() string {
+	if x != nil {
+		return x.ComplainantAction
+	}
+	return ""
+}
+
+func (x *ComplainantAction) GetShortDesc() string {
+	if x != nil {
+		return x.ShortDesc
+	}
+	return ""
+}
+
+func (x *ComplainantAction) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
+func (x *ComplainantAction) GetUpdatedBy() *UpdatedBy {
+	if x != nil {
+		return x.UpdatedBy
+	}
+	return nil
+}
+
+type IssueActions struct {
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	ComplainantActions []*ComplainantAction   `protobuf:"bytes,1,rep,name=complainant_actions,json=complainantActions,proto3" json:"complainant_actions,omitempty"`
+	RespondentActions  []*RespondentAction    `protobuf:"bytes,2,rep,name=respondent_actions,json=respondentActions,proto3" json:"respondent_actions,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
+}
+
 func (x *IssueActions) Reset() {
 	*x = IssueActions{}
-	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[19]
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1315,7 +1384,7 @@ func (x *IssueActions) String() string {
 func (*IssueActions) ProtoMessage() {}
 
 func (x *IssueActions) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[19]
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1328,7 +1397,14 @@ func (x *IssueActions) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IssueActions.ProtoReflect.Descriptor instead.
 func (*IssueActions) Descriptor() ([]byte, []int) {
-	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{19}
+	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *IssueActions) GetComplainantActions() []*ComplainantAction {
+	if x != nil {
+		return x.ComplainantActions
+	}
+	return nil
 }
 
 func (x *IssueActions) GetRespondentActions() []*RespondentAction {
@@ -1338,19 +1414,77 @@ func (x *IssueActions) GetRespondentActions() []*RespondentAction {
 	return nil
 }
 
+type Organization struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Org           *Org                   `protobuf:"bytes,1,opt,name=org,proto3" json:"org,omitempty"`
+	Person        *Person                `protobuf:"bytes,2,opt,name=person,proto3" json:"person,omitempty"`
+	Contact       *Contact               `protobuf:"bytes,3,opt,name=contact,proto3" json:"contact,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Organization) Reset() {
+	*x = Organization{}
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Organization) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Organization) ProtoMessage() {}
+
+func (x *Organization) ProtoReflect() protoreflect.Message {
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Organization.ProtoReflect.Descriptor instead.
+func (*Organization) Descriptor() ([]byte, []int) {
+	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *Organization) GetOrg() *Org {
+	if x != nil {
+		return x.Org
+	}
+	return nil
+}
+
+func (x *Organization) GetPerson() *Person {
+	if x != nil {
+		return x.Person
+	}
+	return nil
+}
+
+func (x *Organization) GetContact() *Contact {
+	if x != nil {
+		return x.Contact
+	}
+	return nil
+}
+
 type ResolutionProviderInfo struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Type          string                 `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
-	Org           *Org                   `protobuf:"bytes,2,opt,name=org,proto3" json:"org,omitempty"`
-	Contact       *Contact               `protobuf:"bytes,3,opt,name=contact,proto3" json:"contact,omitempty"`
-	Person        *Person                `protobuf:"bytes,4,opt,name=person,proto3" json:"person,omitempty"`
+	Organization  *Organization          `protobuf:"bytes,2,opt,name=organization,proto3" json:"organization,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ResolutionProviderInfo) Reset() {
 	*x = ResolutionProviderInfo{}
-	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[20]
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1362,7 +1496,7 @@ func (x *ResolutionProviderInfo) String() string {
 func (*ResolutionProviderInfo) ProtoMessage() {}
 
 func (x *ResolutionProviderInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[20]
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1375,7 +1509,7 @@ func (x *ResolutionProviderInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResolutionProviderInfo.ProtoReflect.Descriptor instead.
 func (*ResolutionProviderInfo) Descriptor() ([]byte, []int) {
-	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{20}
+	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *ResolutionProviderInfo) GetType() string {
@@ -1385,23 +1519,9 @@ func (x *ResolutionProviderInfo) GetType() string {
 	return ""
 }
 
-func (x *ResolutionProviderInfo) GetOrg() *Org {
+func (x *ResolutionProviderInfo) GetOrganization() *Organization {
 	if x != nil {
-		return x.Org
-	}
-	return nil
-}
-
-func (x *ResolutionProviderInfo) GetContact() *Contact {
-	if x != nil {
-		return x.Contact
-	}
-	return nil
-}
-
-func (x *ResolutionProviderInfo) GetPerson() *Person {
-	if x != nil {
-		return x.Person
+		return x.Organization
 	}
 	return nil
 }
@@ -1415,7 +1535,7 @@ type ResolutionProvider struct {
 
 func (x *ResolutionProvider) Reset() {
 	*x = ResolutionProvider{}
-	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[21]
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1427,7 +1547,7 @@ func (x *ResolutionProvider) String() string {
 func (*ResolutionProvider) ProtoMessage() {}
 
 func (x *ResolutionProvider) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[21]
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1440,7 +1560,7 @@ func (x *ResolutionProvider) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResolutionProvider.ProtoReflect.Descriptor instead.
 func (*ResolutionProvider) Descriptor() ([]byte, []int) {
-	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{21}
+	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *ResolutionProvider) GetRespondentInfo() *ResolutionProviderInfo {
@@ -1462,7 +1582,7 @@ type Resolution struct {
 
 func (x *Resolution) Reset() {
 	*x = Resolution{}
-	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[22]
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1474,7 +1594,7 @@ func (x *Resolution) String() string {
 func (*Resolution) ProtoMessage() {}
 
 func (x *Resolution) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[22]
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1487,7 +1607,7 @@ func (x *Resolution) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Resolution.ProtoReflect.Descriptor instead.
 func (*Resolution) Descriptor() ([]byte, []int) {
-	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{22}
+	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *Resolution) GetShortDesc() string {
@@ -1521,16 +1641,22 @@ func (x *Resolution) GetRefundAmount() string {
 type IncomingIssue struct {
 	state              protoimpl.MessageState `protogen:"open.v1"`
 	Id                 string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	IssueActions       *IssueActions          `protobuf:"bytes,2,opt,name=issue_actions,json=issueActions,proto3" json:"issue_actions,omitempty"`
-	ResolutionProvider *ResolutionProvider    `protobuf:"bytes,3,opt,name=resolution_provider,json=resolutionProvider,proto3" json:"resolution_provider,omitempty"`
-	Resolution         *Resolution            `protobuf:"bytes,4,opt,name=resolution,proto3" json:"resolution,omitempty"`
+	Status             string                 `protobuf:"bytes,2,opt,name=status,proto3" json:"status,omitempty"`
+	IssueType          string                 `protobuf:"bytes,3,opt,name=issue_type,json=issueType,proto3" json:"issue_type,omitempty"`
+	Category           string                 `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty"`
+	SubCategory        string                 `protobuf:"bytes,5,opt,name=sub_category,json=subCategory,proto3" json:"sub_category,omitempty"`
+	IssueActions       *IssueActions          `protobuf:"bytes,6,opt,name=issue_actions,json=issueActions,proto3" json:"issue_actions,omitempty"`
+	ResolutionProvider *ResolutionProvider    `protobuf:"bytes,7,opt,name=resolution_provider,json=resolutionProvider,proto3" json:"resolution_provider,omitempty"`
+	Resolution         *Resolution            `protobuf:"bytes,8,opt,name=resolution,proto3" json:"resolution,omitempty"`
+	CreatedAt          string                 `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt          string                 `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
 
 func (x *IncomingIssue) Reset() {
 	*x = IncomingIssue{}
-	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[23]
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1542,7 +1668,7 @@ func (x *IncomingIssue) String() string {
 func (*IncomingIssue) ProtoMessage() {}
 
 func (x *IncomingIssue) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[23]
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1555,12 +1681,40 @@ func (x *IncomingIssue) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IncomingIssue.ProtoReflect.Descriptor instead.
 func (*IncomingIssue) Descriptor() ([]byte, []int) {
-	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{23}
+	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *IncomingIssue) GetId() string {
 	if x != nil {
 		return x.Id
+	}
+	return ""
+}
+
+func (x *IncomingIssue) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *IncomingIssue) GetIssueType() string {
+	if x != nil {
+		return x.IssueType
+	}
+	return ""
+}
+
+func (x *IncomingIssue) GetCategory() string {
+	if x != nil {
+		return x.Category
+	}
+	return ""
+}
+
+func (x *IncomingIssue) GetSubCategory() string {
+	if x != nil {
+		return x.SubCategory
 	}
 	return ""
 }
@@ -1586,6 +1740,20 @@ func (x *IncomingIssue) GetResolution() *Resolution {
 	return nil
 }
 
+func (x *IncomingIssue) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *IncomingIssue) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
 type OnIssuePayload struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Context       *Context               `protobuf:"bytes,1,opt,name=context,proto3" json:"context,omitempty"`
@@ -1596,7 +1764,7 @@ type OnIssuePayload struct {
 
 func (x *OnIssuePayload) Reset() {
 	*x = OnIssuePayload{}
-	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[24]
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1608,7 +1776,7 @@ func (x *OnIssuePayload) String() string {
 func (*OnIssuePayload) ProtoMessage() {}
 
 func (x *OnIssuePayload) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[24]
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1621,7 +1789,7 @@ func (x *OnIssuePayload) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OnIssuePayload.ProtoReflect.Descriptor instead.
 func (*OnIssuePayload) Descriptor() ([]byte, []int) {
-	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{24}
+	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *OnIssuePayload) GetContext() *Context {
@@ -1649,7 +1817,7 @@ type OnIssueRequest struct {
 
 func (x *OnIssueRequest) Reset() {
 	*x = OnIssueRequest{}
-	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[25]
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1661,7 +1829,7 @@ func (x *OnIssueRequest) String() string {
 func (*OnIssueRequest) ProtoMessage() {}
 
 func (x *OnIssueRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[25]
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1674,7 +1842,7 @@ func (x *OnIssueRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OnIssueRequest.ProtoReflect.Descriptor instead.
 func (*OnIssueRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{25}
+	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *OnIssueRequest) GetTransactionId() string {
@@ -1708,7 +1876,7 @@ type OnIssueResponse struct {
 
 func (x *OnIssueResponse) Reset() {
 	*x = OnIssueResponse{}
-	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[26]
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1720,7 +1888,7 @@ func (x *OnIssueResponse) String() string {
 func (*OnIssueResponse) ProtoMessage() {}
 
 func (x *OnIssueResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[26]
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1733,7 +1901,7 @@ func (x *OnIssueResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OnIssueResponse.ProtoReflect.Descriptor instead.
 func (*OnIssueResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{26}
+	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *OnIssueResponse) GetStatus() string {
@@ -1754,14 +1922,14 @@ type OnIssueStatusRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TransactionId string                 `protobuf:"bytes,1,opt,name=transaction_id,json=transactionId,proto3" json:"transaction_id,omitempty"`
 	MessageId     string                 `protobuf:"bytes,2,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`
-	Payload       string                 `protobuf:"bytes,3,opt,name=payload,proto3" json:"payload,omitempty"`
+	Payload       *OnIssuePayload        `protobuf:"bytes,3,opt,name=payload,proto3" json:"payload,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *OnIssueStatusRequest) Reset() {
 	*x = OnIssueStatusRequest{}
-	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[27]
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1773,7 +1941,7 @@ func (x *OnIssueStatusRequest) String() string {
 func (*OnIssueStatusRequest) ProtoMessage() {}
 
 func (x *OnIssueStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[27]
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1786,7 +1954,7 @@ func (x *OnIssueStatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OnIssueStatusRequest.ProtoReflect.Descriptor instead.
 func (*OnIssueStatusRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{27}
+	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *OnIssueStatusRequest) GetTransactionId() string {
@@ -1803,11 +1971,11 @@ func (x *OnIssueStatusRequest) GetMessageId() string {
 	return ""
 }
 
-func (x *OnIssueStatusRequest) GetPayload() string {
+func (x *OnIssueStatusRequest) GetPayload() *OnIssuePayload {
 	if x != nil {
 		return x.Payload
 	}
-	return ""
+	return nil
 }
 
 type OnIssueStatusResponse struct {
@@ -1820,7 +1988,7 @@ type OnIssueStatusResponse struct {
 
 func (x *OnIssueStatusResponse) Reset() {
 	*x = OnIssueStatusResponse{}
-	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[28]
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1832,7 +2000,7 @@ func (x *OnIssueStatusResponse) String() string {
 func (*OnIssueStatusResponse) ProtoMessage() {}
 
 func (x *OnIssueStatusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[28]
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1845,7 +2013,7 @@ func (x *OnIssueStatusResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OnIssueStatusResponse.ProtoReflect.Descriptor instead.
 func (*OnIssueStatusResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{28}
+	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *OnIssueStatusResponse) GetStatus() string {
@@ -1872,7 +2040,7 @@ type IssueStatusRequest struct {
 
 func (x *IssueStatusRequest) Reset() {
 	*x = IssueStatusRequest{}
-	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[29]
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1884,7 +2052,7 @@ func (x *IssueStatusRequest) String() string {
 func (*IssueStatusRequest) ProtoMessage() {}
 
 func (x *IssueStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[29]
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1897,7 +2065,7 @@ func (x *IssueStatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IssueStatusRequest.ProtoReflect.Descriptor instead.
 func (*IssueStatusRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{29}
+	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *IssueStatusRequest) GetUserId() string {
@@ -1927,7 +2095,7 @@ type IssueStatusResponse struct {
 
 func (x *IssueStatusResponse) Reset() {
 	*x = IssueStatusResponse{}
-	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[30]
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1939,7 +2107,7 @@ func (x *IssueStatusResponse) String() string {
 func (*IssueStatusResponse) ProtoMessage() {}
 
 func (x *IssueStatusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[30]
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1952,7 +2120,7 @@ func (x *IssueStatusResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IssueStatusResponse.ProtoReflect.Descriptor instead.
 func (*IssueStatusResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{30}
+	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *IssueStatusResponse) GetIssueId() string {
@@ -2013,7 +2181,7 @@ type Issue struct {
 
 func (x *Issue) Reset() {
 	*x = Issue{}
-	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[31]
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2025,7 +2193,7 @@ func (x *Issue) String() string {
 func (*Issue) ProtoMessage() {}
 
 func (x *Issue) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[31]
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2038,7 +2206,7 @@ func (x *Issue) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Issue.ProtoReflect.Descriptor instead.
 func (*Issue) Descriptor() ([]byte, []int) {
-	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{31}
+	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *Issue) GetIssueId() string {
@@ -2253,14 +2421,25 @@ const file_api_proto_igm_v1_issue_proto_rawDesc = "" +
 	"updated_at\x18\x03 \x01(\tR\tupdatedAt\x120\n" +
 	"\n" +
 	"updated_by\x18\x04 \x01(\v2\x11.igm.v1.UpdatedByR\tupdatedBy\x12%\n" +
-	"\x0ecascaded_level\x18\x05 \x01(\x05R\rcascadedLevel\"W\n" +
-	"\fIssueActions\x12G\n" +
-	"\x12respondent_actions\x18\x01 \x03(\v2\x18.igm.v1.RespondentActionR\x11respondentActions\"\x9e\x01\n" +
+	"\x0ecascaded_level\x18\x05 \x01(\x05R\rcascadedLevel\"\xb2\x01\n" +
+	"\x11ComplainantAction\x12-\n" +
+	"\x12complainant_action\x18\x01 \x01(\tR\x11complainantAction\x12\x1d\n" +
+	"\n" +
+	"short_desc\x18\x02 \x01(\tR\tshortDesc\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\x03 \x01(\tR\tupdatedAt\x120\n" +
+	"\n" +
+	"updated_by\x18\x04 \x01(\v2\x11.igm.v1.UpdatedByR\tupdatedBy\"\xa3\x01\n" +
+	"\fIssueActions\x12J\n" +
+	"\x13complainant_actions\x18\x01 \x03(\v2\x19.igm.v1.ComplainantActionR\x12complainantActions\x12G\n" +
+	"\x12respondent_actions\x18\x02 \x03(\v2\x18.igm.v1.RespondentActionR\x11respondentActions\"\x80\x01\n" +
+	"\fOrganization\x12\x1d\n" +
+	"\x03org\x18\x01 \x01(\v2\v.igm.v1.OrgR\x03org\x12&\n" +
+	"\x06person\x18\x02 \x01(\v2\x0e.igm.v1.PersonR\x06person\x12)\n" +
+	"\acontact\x18\x03 \x01(\v2\x0f.igm.v1.ContactR\acontact\"f\n" +
 	"\x16ResolutionProviderInfo\x12\x12\n" +
-	"\x04type\x18\x01 \x01(\tR\x04type\x12\x1d\n" +
-	"\x03org\x18\x02 \x01(\v2\v.igm.v1.OrgR\x03org\x12)\n" +
-	"\acontact\x18\x03 \x01(\v2\x0f.igm.v1.ContactR\acontact\x12&\n" +
-	"\x06person\x18\x04 \x01(\v2\x0e.igm.v1.PersonR\x06person\"]\n" +
+	"\x04type\x18\x01 \x01(\tR\x04type\x128\n" +
+	"\forganization\x18\x02 \x01(\v2\x14.igm.v1.OrganizationR\forganization\"]\n" +
 	"\x12ResolutionProvider\x12G\n" +
 	"\x0frespondent_info\x18\x01 \x01(\v2\x1e.igm.v1.ResolutionProviderInfoR\x0erespondentInfo\"\x98\x01\n" +
 	"\n" +
@@ -2269,14 +2448,24 @@ const file_api_proto_igm_v1_issue_proto_rawDesc = "" +
 	"short_desc\x18\x01 \x01(\tR\tshortDesc\x12\x1b\n" +
 	"\tlong_desc\x18\x02 \x01(\tR\blongDesc\x12)\n" +
 	"\x10action_triggered\x18\x03 \x01(\tR\x0factionTriggered\x12#\n" +
-	"\rrefund_amount\x18\x04 \x01(\tR\frefundAmount\"\xdb\x01\n" +
+	"\rrefund_amount\x18\x04 \x01(\tR\frefundAmount\"\x8f\x03\n" +
 	"\rIncomingIssue\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x129\n" +
-	"\rissue_actions\x18\x02 \x01(\v2\x14.igm.v1.IssueActionsR\fissueActions\x12K\n" +
-	"\x13resolution_provider\x18\x03 \x01(\v2\x1a.igm.v1.ResolutionProviderR\x12resolutionProvider\x122\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
+	"\x06status\x18\x02 \x01(\tR\x06status\x12\x1d\n" +
 	"\n" +
-	"resolution\x18\x04 \x01(\v2\x12.igm.v1.ResolutionR\n" +
-	"resolution\"h\n" +
+	"issue_type\x18\x03 \x01(\tR\tissueType\x12\x1a\n" +
+	"\bcategory\x18\x04 \x01(\tR\bcategory\x12!\n" +
+	"\fsub_category\x18\x05 \x01(\tR\vsubCategory\x129\n" +
+	"\rissue_actions\x18\x06 \x01(\v2\x14.igm.v1.IssueActionsR\fissueActions\x12K\n" +
+	"\x13resolution_provider\x18\a \x01(\v2\x1a.igm.v1.ResolutionProviderR\x12resolutionProvider\x122\n" +
+	"\n" +
+	"resolution\x18\b \x01(\v2\x12.igm.v1.ResolutionR\n" +
+	"resolution\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\t \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\n" +
+	" \x01(\tR\tupdatedAt\"h\n" +
 	"\x0eOnIssuePayload\x12)\n" +
 	"\acontext\x18\x01 \x01(\v2\x0f.igm.v1.ContextR\acontext\x12+\n" +
 	"\x05issue\x18\x02 \x01(\v2\x15.igm.v1.IncomingIssueR\x05issue\"\x88\x01\n" +
@@ -2288,12 +2477,12 @@ const file_api_proto_igm_v1_issue_proto_rawDesc = "" +
 	" \x01(\v2\x16.igm.v1.OnIssuePayloadR\apayload\"C\n" +
 	"\x0fOnIssueResponse\x12\x16\n" +
 	"\x06status\x18\x01 \x01(\tR\x06status\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"v\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"\x8e\x01\n" +
 	"\x14OnIssueStatusRequest\x12%\n" +
 	"\x0etransaction_id\x18\x01 \x01(\tR\rtransactionId\x12\x1d\n" +
 	"\n" +
-	"message_id\x18\x02 \x01(\tR\tmessageId\x12\x18\n" +
-	"\apayload\x18\x03 \x01(\tR\apayload\"I\n" +
+	"message_id\x18\x02 \x01(\tR\tmessageId\x120\n" +
+	"\apayload\x18\x03 \x01(\v2\x16.igm.v1.OnIssuePayloadR\apayload\"I\n" +
 	"\x15OnIssueStatusResponse\x12\x16\n" +
 	"\x06status\x18\x01 \x01(\tR\x06status\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\"H\n" +
@@ -2352,7 +2541,7 @@ func file_api_proto_igm_v1_issue_proto_rawDescGZIP() []byte {
 	return file_api_proto_igm_v1_issue_proto_rawDescData
 }
 
-var file_api_proto_igm_v1_issue_proto_msgTypes = make([]protoimpl.MessageInfo, 32)
+var file_api_proto_igm_v1_issue_proto_msgTypes = make([]protoimpl.MessageInfo, 34)
 var file_api_proto_igm_v1_issue_proto_goTypes = []any{
 	(*CreateIssueRequest)(nil),      // 0: igm.v1.CreateIssueRequest
 	(*AdditionalDescription)(nil),   // 1: igm.v1.AdditionalDescription
@@ -2373,63 +2562,69 @@ var file_api_proto_igm_v1_issue_proto_goTypes = []any{
 	(*Person)(nil),                  // 16: igm.v1.Person
 	(*UpdatedBy)(nil),               // 17: igm.v1.UpdatedBy
 	(*RespondentAction)(nil),        // 18: igm.v1.RespondentAction
-	(*IssueActions)(nil),            // 19: igm.v1.IssueActions
-	(*ResolutionProviderInfo)(nil),  // 20: igm.v1.ResolutionProviderInfo
-	(*ResolutionProvider)(nil),      // 21: igm.v1.ResolutionProvider
-	(*Resolution)(nil),              // 22: igm.v1.Resolution
-	(*IncomingIssue)(nil),           // 23: igm.v1.IncomingIssue
-	(*OnIssuePayload)(nil),          // 24: igm.v1.OnIssuePayload
-	(*OnIssueRequest)(nil),          // 25: igm.v1.OnIssueRequest
-	(*OnIssueResponse)(nil),         // 26: igm.v1.OnIssueResponse
-	(*OnIssueStatusRequest)(nil),    // 27: igm.v1.OnIssueStatusRequest
-	(*OnIssueStatusResponse)(nil),   // 28: igm.v1.OnIssueStatusResponse
-	(*IssueStatusRequest)(nil),      // 29: igm.v1.IssueStatusRequest
-	(*IssueStatusResponse)(nil),     // 30: igm.v1.IssueStatusResponse
-	(*Issue)(nil),                   // 31: igm.v1.Issue
+	(*ComplainantAction)(nil),       // 19: igm.v1.ComplainantAction
+	(*IssueActions)(nil),            // 20: igm.v1.IssueActions
+	(*Organization)(nil),            // 21: igm.v1.Organization
+	(*ResolutionProviderInfo)(nil),  // 22: igm.v1.ResolutionProviderInfo
+	(*ResolutionProvider)(nil),      // 23: igm.v1.ResolutionProvider
+	(*Resolution)(nil),              // 24: igm.v1.Resolution
+	(*IncomingIssue)(nil),           // 25: igm.v1.IncomingIssue
+	(*OnIssuePayload)(nil),          // 26: igm.v1.OnIssuePayload
+	(*OnIssueRequest)(nil),          // 27: igm.v1.OnIssueRequest
+	(*OnIssueResponse)(nil),         // 28: igm.v1.OnIssueResponse
+	(*OnIssueStatusRequest)(nil),    // 29: igm.v1.OnIssueStatusRequest
+	(*OnIssueStatusResponse)(nil),   // 30: igm.v1.OnIssueStatusResponse
+	(*IssueStatusRequest)(nil),      // 31: igm.v1.IssueStatusRequest
+	(*IssueStatusResponse)(nil),     // 32: igm.v1.IssueStatusResponse
+	(*Issue)(nil),                   // 33: igm.v1.Issue
 }
 var file_api_proto_igm_v1_issue_proto_depIdxs = []int32{
 	1,  // 0: igm.v1.CreateIssueRequest.additional_desc:type_name -> igm.v1.AdditionalDescription
 	2,  // 1: igm.v1.CreateIssueRequest.items:type_name -> igm.v1.IssueItem
-	31, // 2: igm.v1.GetIssueResponse.issue:type_name -> igm.v1.Issue
-	31, // 3: igm.v1.ListIssueResponse.issues:type_name -> igm.v1.Issue
+	33, // 2: igm.v1.GetIssueResponse.issue:type_name -> igm.v1.Issue
+	33, // 3: igm.v1.ListIssueResponse.issues:type_name -> igm.v1.Issue
 	14, // 4: igm.v1.UpdatedBy.org:type_name -> igm.v1.Org
 	15, // 5: igm.v1.UpdatedBy.contact:type_name -> igm.v1.Contact
 	16, // 6: igm.v1.UpdatedBy.person:type_name -> igm.v1.Person
 	17, // 7: igm.v1.RespondentAction.updated_by:type_name -> igm.v1.UpdatedBy
-	18, // 8: igm.v1.IssueActions.respondent_actions:type_name -> igm.v1.RespondentAction
-	14, // 9: igm.v1.ResolutionProviderInfo.org:type_name -> igm.v1.Org
-	15, // 10: igm.v1.ResolutionProviderInfo.contact:type_name -> igm.v1.Contact
-	16, // 11: igm.v1.ResolutionProviderInfo.person:type_name -> igm.v1.Person
-	20, // 12: igm.v1.ResolutionProvider.respondent_info:type_name -> igm.v1.ResolutionProviderInfo
-	19, // 13: igm.v1.IncomingIssue.issue_actions:type_name -> igm.v1.IssueActions
-	21, // 14: igm.v1.IncomingIssue.resolution_provider:type_name -> igm.v1.ResolutionProvider
-	22, // 15: igm.v1.IncomingIssue.resolution:type_name -> igm.v1.Resolution
-	13, // 16: igm.v1.OnIssuePayload.context:type_name -> igm.v1.Context
-	23, // 17: igm.v1.OnIssuePayload.issue:type_name -> igm.v1.IncomingIssue
-	24, // 18: igm.v1.OnIssueRequest.payload:type_name -> igm.v1.OnIssuePayload
-	0,  // 19: igm.v1.IssueService.CreateIssue:input_type -> igm.v1.CreateIssueRequest
-	4,  // 20: igm.v1.IssueService.UpdateIssue:input_type -> igm.v1.UpdateIssueRequest
-	6,  // 21: igm.v1.IssueService.CloseIssue:input_type -> igm.v1.CloseIssueRequest
-	8,  // 22: igm.v1.IssueService.GetIssue:input_type -> igm.v1.GetIssueRequest
-	10, // 23: igm.v1.IssueService.ListIssues:input_type -> igm.v1.ListIssueRequest
-	11, // 24: igm.v1.IssueService.ListIssueByOrder:input_type -> igm.v1.ListIssueByOrderRequest
-	29, // 25: igm.v1.IssueService.HandleIssueStatus:input_type -> igm.v1.IssueStatusRequest
-	25, // 26: igm.v1.IssueService.HandleOnIssue:input_type -> igm.v1.OnIssueRequest
-	27, // 27: igm.v1.IssueService.HandleOnIssueStatus:input_type -> igm.v1.OnIssueStatusRequest
-	3,  // 28: igm.v1.IssueService.CreateIssue:output_type -> igm.v1.CreateIssueResponse
-	5,  // 29: igm.v1.IssueService.UpdateIssue:output_type -> igm.v1.UpdateIssueResponse
-	7,  // 30: igm.v1.IssueService.CloseIssue:output_type -> igm.v1.CloseIssueResponse
-	9,  // 31: igm.v1.IssueService.GetIssue:output_type -> igm.v1.GetIssueResponse
-	12, // 32: igm.v1.IssueService.ListIssues:output_type -> igm.v1.ListIssueResponse
-	12, // 33: igm.v1.IssueService.ListIssueByOrder:output_type -> igm.v1.ListIssueResponse
-	30, // 34: igm.v1.IssueService.HandleIssueStatus:output_type -> igm.v1.IssueStatusResponse
-	26, // 35: igm.v1.IssueService.HandleOnIssue:output_type -> igm.v1.OnIssueResponse
-	28, // 36: igm.v1.IssueService.HandleOnIssueStatus:output_type -> igm.v1.OnIssueStatusResponse
-	28, // [28:37] is the sub-list for method output_type
-	19, // [19:28] is the sub-list for method input_type
-	19, // [19:19] is the sub-list for extension type_name
-	19, // [19:19] is the sub-list for extension extendee
-	0,  // [0:19] is the sub-list for field type_name
+	17, // 8: igm.v1.ComplainantAction.updated_by:type_name -> igm.v1.UpdatedBy
+	19, // 9: igm.v1.IssueActions.complainant_actions:type_name -> igm.v1.ComplainantAction
+	18, // 10: igm.v1.IssueActions.respondent_actions:type_name -> igm.v1.RespondentAction
+	14, // 11: igm.v1.Organization.org:type_name -> igm.v1.Org
+	16, // 12: igm.v1.Organization.person:type_name -> igm.v1.Person
+	15, // 13: igm.v1.Organization.contact:type_name -> igm.v1.Contact
+	21, // 14: igm.v1.ResolutionProviderInfo.organization:type_name -> igm.v1.Organization
+	22, // 15: igm.v1.ResolutionProvider.respondent_info:type_name -> igm.v1.ResolutionProviderInfo
+	20, // 16: igm.v1.IncomingIssue.issue_actions:type_name -> igm.v1.IssueActions
+	23, // 17: igm.v1.IncomingIssue.resolution_provider:type_name -> igm.v1.ResolutionProvider
+	24, // 18: igm.v1.IncomingIssue.resolution:type_name -> igm.v1.Resolution
+	13, // 19: igm.v1.OnIssuePayload.context:type_name -> igm.v1.Context
+	25, // 20: igm.v1.OnIssuePayload.issue:type_name -> igm.v1.IncomingIssue
+	26, // 21: igm.v1.OnIssueRequest.payload:type_name -> igm.v1.OnIssuePayload
+	26, // 22: igm.v1.OnIssueStatusRequest.payload:type_name -> igm.v1.OnIssuePayload
+	0,  // 23: igm.v1.IssueService.CreateIssue:input_type -> igm.v1.CreateIssueRequest
+	4,  // 24: igm.v1.IssueService.UpdateIssue:input_type -> igm.v1.UpdateIssueRequest
+	6,  // 25: igm.v1.IssueService.CloseIssue:input_type -> igm.v1.CloseIssueRequest
+	8,  // 26: igm.v1.IssueService.GetIssue:input_type -> igm.v1.GetIssueRequest
+	10, // 27: igm.v1.IssueService.ListIssues:input_type -> igm.v1.ListIssueRequest
+	11, // 28: igm.v1.IssueService.ListIssueByOrder:input_type -> igm.v1.ListIssueByOrderRequest
+	31, // 29: igm.v1.IssueService.HandleIssueStatus:input_type -> igm.v1.IssueStatusRequest
+	27, // 30: igm.v1.IssueService.HandleOnIssue:input_type -> igm.v1.OnIssueRequest
+	29, // 31: igm.v1.IssueService.HandleOnIssueStatus:input_type -> igm.v1.OnIssueStatusRequest
+	3,  // 32: igm.v1.IssueService.CreateIssue:output_type -> igm.v1.CreateIssueResponse
+	5,  // 33: igm.v1.IssueService.UpdateIssue:output_type -> igm.v1.UpdateIssueResponse
+	7,  // 34: igm.v1.IssueService.CloseIssue:output_type -> igm.v1.CloseIssueResponse
+	9,  // 35: igm.v1.IssueService.GetIssue:output_type -> igm.v1.GetIssueResponse
+	12, // 36: igm.v1.IssueService.ListIssues:output_type -> igm.v1.ListIssueResponse
+	12, // 37: igm.v1.IssueService.ListIssueByOrder:output_type -> igm.v1.ListIssueResponse
+	32, // 38: igm.v1.IssueService.HandleIssueStatus:output_type -> igm.v1.IssueStatusResponse
+	28, // 39: igm.v1.IssueService.HandleOnIssue:output_type -> igm.v1.OnIssueResponse
+	30, // 40: igm.v1.IssueService.HandleOnIssueStatus:output_type -> igm.v1.OnIssueStatusResponse
+	32, // [32:41] is the sub-list for method output_type
+	23, // [23:32] is the sub-list for method input_type
+	23, // [23:23] is the sub-list for extension type_name
+	23, // [23:23] is the sub-list for extension extendee
+	0,  // [0:23] is the sub-list for field type_name
 }
 
 func init() { file_api_proto_igm_v1_issue_proto_init() }
@@ -2443,7 +2638,7 @@ func file_api_proto_igm_v1_issue_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_proto_igm_v1_issue_proto_rawDesc), len(file_api_proto_igm_v1_issue_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   32,
+			NumMessages:   34,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

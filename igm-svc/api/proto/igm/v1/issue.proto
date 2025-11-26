@@ -49,7 +49,7 @@ message IssueItem{
 message CreateIssueResponse{
     string issue_id = 1;
     string order_id = 2;
-    string status = 3;  //open
+    string status = 3;  
     string transaction_id = 4;
     string created_at = 5;
 
@@ -63,7 +63,7 @@ message UpdateIssueRequest{
     string issue_id = 2;
     string order_id = 3;
     string issue_type = 4;
-    string status = 5; //new status
+    string status = 5; 
     string complainant_action_short_desc = 6;
 }
 
@@ -155,18 +155,30 @@ message RespondentAction {
     int32 cascaded_level = 5;
 }
 
+message ComplainantAction {
+    string complainant_action = 1;
+    string short_desc = 2;
+    string updated_at = 3;
+    UpdatedBy updated_by = 4;
+}
+
 message IssueActions {
-  repeated RespondentAction respondent_actions = 1;
+    repeated ComplainantAction complainant_actions = 1;
+    repeated RespondentAction respondent_actions = 2;
 }
 
-message ResolutionProviderInfo{
-    string type = 1;
-    Org org = 2;
+message Organization {
+    Org org = 1;
+    Person person = 2;
     Contact contact = 3;
-    Person person = 4;
 }
 
-message ResolutionProvider{
+message ResolutionProviderInfo {
+    string type = 1;
+    Organization organization = 2;
+}
+
+message ResolutionProvider {
     ResolutionProviderInfo respondent_info = 1;
 }
 
@@ -177,13 +189,19 @@ message Resolution {
     string refund_amount = 4;
 }
 
-message IncomingIssue{
+message IncomingIssue {
     string id = 1;
-    IssueActions issue_actions = 2;
-    ResolutionProvider resolution_provider = 3;
-    Resolution resolution = 4;
-
+    string status = 2;
+    string issue_type = 3;
+    string category = 4;
+    string sub_category = 5;
+    IssueActions issue_actions = 6;
+    ResolutionProvider resolution_provider = 7;
+    Resolution resolution = 8;
+    string created_at = 9;
+    string updated_at = 10;
 }
+
 message OnIssuePayload {
   Context context = 1;
   IncomingIssue issue = 2;
@@ -206,7 +224,7 @@ message OnIssueResponse{
 message OnIssueStatusRequest{
     string transaction_id = 1;
     string message_id = 2;
-    string payload = 3;
+    OnIssuePayload payload = 3;
 }
 
 message OnIssueStatusResponse{

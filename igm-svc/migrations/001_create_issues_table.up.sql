@@ -34,11 +34,11 @@ CREATE TABLE IF NOT EXISTS issues (
     source_npid VARCHAR(255),
     source_type VARCHAR(100),
     
-    -- Expected timelines (ISO 8601 duration strings)
+    
     expected_response_time VARCHAR(50),
     expected_resolution_time VARCHAR(50),
     
-    -- Rating (for CLOSE operation)
+    -- Rating for CLOSE operation
     rating VARCHAR(50),
     
     -- JSONB fields
