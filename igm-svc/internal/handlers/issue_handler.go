@@ -12,14 +12,16 @@ import (
 
 type IssueHandler struct {
 	pb.UnimplementedIssueServiceServer
-	issueService *services.IssueService
-	onIssueService *services.OnIssueService
+	issueService       *services.IssueService
+	onIssueService     *services.OnIssueService
+	issueStatusService *services.IssueStatusService
 }
 
-func NewIssueHandler(issueService *services.IssueService, onIssueService *services.OnIssueService) *IssueHandler {
+func NewIssueHandler(issueService *services.IssueService, onIssueService *services.OnIssueService, issueStatusService *services.IssueStatusService) *IssueHandler {
 	return &IssueHandler{
-		issueService: issueService,
-		onIssueService: onIssueService,
+		issueService:       issueService,
+		onIssueService:     onIssueService,
+		issueStatusService: issueStatusService,
 	}
 }
 
@@ -81,8 +83,8 @@ func (h *IssueHandler) ListIssues(ctc context.Context, req *pb.ListIssueRequest)
 }
 
 func (h *IssueHandler) ListIssueByOrder(ctx context.Context, req *pb.ListIssueByOrderRequest) (*pb.ListIssueResponse, error) {
-	log.Printf("[Handler] ListIssueByOrder called by user :%s for order:%s",req.UserId,req.OrderId)
-	resp,err:=h.issueService.GetIssueByOrder(ctx,req)
+	log.Printf("[Handler] ListIssueByOrder called by user :%s for order:%s", req.UserId, req.OrderId)
+	resp, err := h.issueService.GetIssueByOrder(ctx, req)
 	if err != nil {
 		log.Printf("[handler] Get Issues by Order failed :%v", err)
 		return nil, status.Errorf(codes.Internal, "failed to Get Issues for order :%v", err)

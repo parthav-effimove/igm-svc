@@ -25,6 +25,7 @@ const (
 	IssueService_GetIssue_FullMethodName            = "/igm.v1.IssueService/GetIssue"
 	IssueService_ListIssues_FullMethodName          = "/igm.v1.IssueService/ListIssues"
 	IssueService_ListIssueByOrder_FullMethodName    = "/igm.v1.IssueService/ListIssueByOrder"
+	IssueService_HandleIssueStatus_FullMethodName   = "/igm.v1.IssueService/HandleIssueStatus"
 	IssueService_HandleOnIssue_FullMethodName       = "/igm.v1.IssueService/HandleOnIssue"
 	IssueService_HandleOnIssueStatus_FullMethodName = "/igm.v1.IssueService/HandleOnIssueStatus"
 )
@@ -39,6 +40,7 @@ type IssueServiceClient interface {
 	GetIssue(ctx context.Context, in *GetIssueRequest, opts ...grpc.CallOption) (*GetIssueResponse, error)
 	ListIssues(ctx context.Context, in *ListIssueRequest, opts ...grpc.CallOption) (*ListIssueResponse, error)
 	ListIssueByOrder(ctx context.Context, in *ListIssueByOrderRequest, opts ...grpc.CallOption) (*ListIssueResponse, error)
+	HandleIssueStatus(ctx context.Context, in *IssueStatusRequest, opts ...grpc.CallOption) (*IssueStatusResponse, error)
 	HandleOnIssue(ctx context.Context, in *OnIssueRequest, opts ...grpc.CallOption) (*OnIssueResponse, error)
 	HandleOnIssueStatus(ctx context.Context, in *OnIssueStatusRequest, opts ...grpc.CallOption) (*OnIssueStatusResponse, error)
 }
@@ -111,6 +113,16 @@ func (c *issueServiceClient) ListIssueByOrder(ctx context.Context, in *ListIssue
 	return out, nil
 }
 
+func (c *issueServiceClient) HandleIssueStatus(ctx context.Context, in *IssueStatusRequest, opts ...grpc.CallOption) (*IssueStatusResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(IssueStatusResponse)
+	err := c.cc.Invoke(ctx, IssueService_HandleIssueStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *issueServiceClient) HandleOnIssue(ctx context.Context, in *OnIssueRequest, opts ...grpc.CallOption) (*OnIssueResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(OnIssueResponse)
@@ -141,6 +153,7 @@ type IssueServiceServer interface {
 	GetIssue(context.Context, *GetIssueRequest) (*GetIssueResponse, error)
 	ListIssues(context.Context, *ListIssueRequest) (*ListIssueResponse, error)
 	ListIssueByOrder(context.Context, *ListIssueByOrderRequest) (*ListIssueResponse, error)
+	HandleIssueStatus(context.Context, *IssueStatusRequest) (*IssueStatusResponse, error)
 	HandleOnIssue(context.Context, *OnIssueRequest) (*OnIssueResponse, error)
 	HandleOnIssueStatus(context.Context, *OnIssueStatusRequest) (*OnIssueStatusResponse, error)
 	mustEmbedUnimplementedIssueServiceServer()
@@ -170,6 +183,9 @@ func (UnimplementedIssueServiceServer) ListIssues(context.Context, *ListIssueReq
 }
 func (UnimplementedIssueServiceServer) ListIssueByOrder(context.Context, *ListIssueByOrderRequest) (*ListIssueResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListIssueByOrder not implemented")
+}
+func (UnimplementedIssueServiceServer) HandleIssueStatus(context.Context, *IssueStatusRequest) (*IssueStatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method HandleIssueStatus not implemented")
 }
 func (UnimplementedIssueServiceServer) HandleOnIssue(context.Context, *OnIssueRequest) (*OnIssueResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method HandleOnIssue not implemented")
@@ -306,6 +322,24 @@ func _IssueService_ListIssueByOrder_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _IssueService_HandleIssueStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IssueStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IssueServiceServer).HandleIssueStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IssueService_HandleIssueStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IssueServiceServer).HandleIssueStatus(ctx, req.(*IssueStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _IssueService_HandleOnIssue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(OnIssueRequest)
 	if err := dec(in); err != nil {
@@ -372,6 +406,10 @@ var IssueService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListIssueByOrder",
 			Handler:    _IssueService_ListIssueByOrder_Handler,
+		},
+		{
+			MethodName: "HandleIssueStatus",
+			Handler:    _IssueService_HandleIssueStatus_Handler,
 		},
 		{
 			MethodName: "HandleOnIssue",

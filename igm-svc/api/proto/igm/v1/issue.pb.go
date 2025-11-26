@@ -1862,6 +1862,134 @@ func (x *OnIssueStatusResponse) GetMessage() string {
 	return ""
 }
 
+type IssueStatusRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	IssueId       string                 `protobuf:"bytes,2,opt,name=issue_id,json=issueId,proto3" json:"issue_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *IssueStatusRequest) Reset() {
+	*x = IssueStatusRequest{}
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *IssueStatusRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IssueStatusRequest) ProtoMessage() {}
+
+func (x *IssueStatusRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IssueStatusRequest.ProtoReflect.Descriptor instead.
+func (*IssueStatusRequest) Descriptor() ([]byte, []int) {
+	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *IssueStatusRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *IssueStatusRequest) GetIssueId() string {
+	if x != nil {
+		return x.IssueId
+	}
+	return ""
+}
+
+type IssueStatusResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	IssueId       string                 `protobuf:"bytes,1,opt,name=issue_id,json=issueId,proto3" json:"issue_id,omitempty"`
+	Status        string                 `protobuf:"bytes,2,opt,name=status,proto3" json:"status,omitempty"`
+	Message       string                 `protobuf:"bytes,3,opt,name=message,proto3" json:"message,omitempty"`
+	OndcSent      bool                   `protobuf:"varint,4,opt,name=ondc_sent,json=ondcSent,proto3" json:"ondc_sent,omitempty"`
+	OndcMessage   string                 `protobuf:"bytes,5,opt,name=ondc_message,json=ondcMessage,proto3" json:"ondc_message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *IssueStatusResponse) Reset() {
+	*x = IssueStatusResponse{}
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *IssueStatusResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IssueStatusResponse) ProtoMessage() {}
+
+func (x *IssueStatusResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IssueStatusResponse.ProtoReflect.Descriptor instead.
+func (*IssueStatusResponse) Descriptor() ([]byte, []int) {
+	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *IssueStatusResponse) GetIssueId() string {
+	if x != nil {
+		return x.IssueId
+	}
+	return ""
+}
+
+func (x *IssueStatusResponse) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *IssueStatusResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+func (x *IssueStatusResponse) GetOndcSent() bool {
+	if x != nil {
+		return x.OndcSent
+	}
+	return false
+}
+
+func (x *IssueStatusResponse) GetOndcMessage() string {
+	if x != nil {
+		return x.OndcMessage
+	}
+	return ""
+}
+
 type Issue struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	IssueId          string                 `protobuf:"bytes,1,opt,name=issue_id,json=issueId,proto3" json:"issue_id,omitempty"`
@@ -1885,7 +2013,7 @@ type Issue struct {
 
 func (x *Issue) Reset() {
 	*x = Issue{}
-	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[29]
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1897,7 +2025,7 @@ func (x *Issue) String() string {
 func (*Issue) ProtoMessage() {}
 
 func (x *Issue) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[29]
+	mi := &file_api_proto_igm_v1_issue_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1910,7 +2038,7 @@ func (x *Issue) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Issue.ProtoReflect.Descriptor instead.
 func (*Issue) Descriptor() ([]byte, []int) {
-	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{29}
+	return file_api_proto_igm_v1_issue_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *Issue) GetIssueId() string {
@@ -2168,7 +2296,16 @@ const file_api_proto_igm_v1_issue_proto_rawDesc = "" +
 	"\apayload\x18\x03 \x01(\tR\apayload\"I\n" +
 	"\x15OnIssueStatusResponse\x12\x16\n" +
 	"\x06status\x18\x01 \x01(\tR\x06status\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"\xd8\x03\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"H\n" +
+	"\x12IssueStatusRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x19\n" +
+	"\bissue_id\x18\x02 \x01(\tR\aissueId\"\xa2\x01\n" +
+	"\x13IssueStatusResponse\x12\x19\n" +
+	"\bissue_id\x18\x01 \x01(\tR\aissueId\x12\x16\n" +
+	"\x06status\x18\x02 \x01(\tR\x06status\x12\x18\n" +
+	"\amessage\x18\x03 \x01(\tR\amessage\x12\x1b\n" +
+	"\tondc_sent\x18\x04 \x01(\bR\bondcSent\x12!\n" +
+	"\fondc_message\x18\x05 \x01(\tR\vondcMessage\"\xd8\x03\n" +
 	"\x05Issue\x12\x19\n" +
 	"\bissue_id\x18\x01 \x01(\tR\aissueId\x12\x19\n" +
 	"\border_id\x18\x02 \x01(\tR\aorderId\x12\x17\n" +
@@ -2189,7 +2326,7 @@ const file_api_proto_igm_v1_issue_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x0e \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\x0f \x01(\tR\tupdatedAt2\xcb\x04\n" +
+	"updated_at\x18\x0f \x01(\tR\tupdatedAt2\x99\x05\n" +
 	"\fIssueService\x12F\n" +
 	"\vCreateIssue\x12\x1a.igm.v1.CreateIssueRequest\x1a\x1b.igm.v1.CreateIssueResponse\x12F\n" +
 	"\vUpdateIssue\x12\x1a.igm.v1.UpdateIssueRequest\x1a\x1b.igm.v1.UpdateIssueResponse\x12C\n" +
@@ -2198,7 +2335,8 @@ const file_api_proto_igm_v1_issue_proto_rawDesc = "" +
 	"\bGetIssue\x12\x17.igm.v1.GetIssueRequest\x1a\x18.igm.v1.GetIssueResponse\x12A\n" +
 	"\n" +
 	"ListIssues\x12\x18.igm.v1.ListIssueRequest\x1a\x19.igm.v1.ListIssueResponse\x12N\n" +
-	"\x10ListIssueByOrder\x12\x1f.igm.v1.ListIssueByOrderRequest\x1a\x19.igm.v1.ListIssueResponse\x12@\n" +
+	"\x10ListIssueByOrder\x12\x1f.igm.v1.ListIssueByOrderRequest\x1a\x19.igm.v1.ListIssueResponse\x12L\n" +
+	"\x11HandleIssueStatus\x12\x1a.igm.v1.IssueStatusRequest\x1a\x1b.igm.v1.IssueStatusResponse\x12@\n" +
 	"\rHandleOnIssue\x12\x16.igm.v1.OnIssueRequest\x1a\x17.igm.v1.OnIssueResponse\x12R\n" +
 	"\x13HandleOnIssueStatus\x12\x1c.igm.v1.OnIssueStatusRequest\x1a\x1d.igm.v1.OnIssueStatusResponseB/Z-github/effimove/igm-svc/api/proto/igm/v1;igmbb\x06proto3"
 
@@ -2214,7 +2352,7 @@ func file_api_proto_igm_v1_issue_proto_rawDescGZIP() []byte {
 	return file_api_proto_igm_v1_issue_proto_rawDescData
 }
 
-var file_api_proto_igm_v1_issue_proto_msgTypes = make([]protoimpl.MessageInfo, 30)
+var file_api_proto_igm_v1_issue_proto_msgTypes = make([]protoimpl.MessageInfo, 32)
 var file_api_proto_igm_v1_issue_proto_goTypes = []any{
 	(*CreateIssueRequest)(nil),      // 0: igm.v1.CreateIssueRequest
 	(*AdditionalDescription)(nil),   // 1: igm.v1.AdditionalDescription
@@ -2245,13 +2383,15 @@ var file_api_proto_igm_v1_issue_proto_goTypes = []any{
 	(*OnIssueResponse)(nil),         // 26: igm.v1.OnIssueResponse
 	(*OnIssueStatusRequest)(nil),    // 27: igm.v1.OnIssueStatusRequest
 	(*OnIssueStatusResponse)(nil),   // 28: igm.v1.OnIssueStatusResponse
-	(*Issue)(nil),                   // 29: igm.v1.Issue
+	(*IssueStatusRequest)(nil),      // 29: igm.v1.IssueStatusRequest
+	(*IssueStatusResponse)(nil),     // 30: igm.v1.IssueStatusResponse
+	(*Issue)(nil),                   // 31: igm.v1.Issue
 }
 var file_api_proto_igm_v1_issue_proto_depIdxs = []int32{
 	1,  // 0: igm.v1.CreateIssueRequest.additional_desc:type_name -> igm.v1.AdditionalDescription
 	2,  // 1: igm.v1.CreateIssueRequest.items:type_name -> igm.v1.IssueItem
-	29, // 2: igm.v1.GetIssueResponse.issue:type_name -> igm.v1.Issue
-	29, // 3: igm.v1.ListIssueResponse.issues:type_name -> igm.v1.Issue
+	31, // 2: igm.v1.GetIssueResponse.issue:type_name -> igm.v1.Issue
+	31, // 3: igm.v1.ListIssueResponse.issues:type_name -> igm.v1.Issue
 	14, // 4: igm.v1.UpdatedBy.org:type_name -> igm.v1.Org
 	15, // 5: igm.v1.UpdatedBy.contact:type_name -> igm.v1.Contact
 	16, // 6: igm.v1.UpdatedBy.person:type_name -> igm.v1.Person
@@ -2273,18 +2413,20 @@ var file_api_proto_igm_v1_issue_proto_depIdxs = []int32{
 	8,  // 22: igm.v1.IssueService.GetIssue:input_type -> igm.v1.GetIssueRequest
 	10, // 23: igm.v1.IssueService.ListIssues:input_type -> igm.v1.ListIssueRequest
 	11, // 24: igm.v1.IssueService.ListIssueByOrder:input_type -> igm.v1.ListIssueByOrderRequest
-	25, // 25: igm.v1.IssueService.HandleOnIssue:input_type -> igm.v1.OnIssueRequest
-	27, // 26: igm.v1.IssueService.HandleOnIssueStatus:input_type -> igm.v1.OnIssueStatusRequest
-	3,  // 27: igm.v1.IssueService.CreateIssue:output_type -> igm.v1.CreateIssueResponse
-	5,  // 28: igm.v1.IssueService.UpdateIssue:output_type -> igm.v1.UpdateIssueResponse
-	7,  // 29: igm.v1.IssueService.CloseIssue:output_type -> igm.v1.CloseIssueResponse
-	9,  // 30: igm.v1.IssueService.GetIssue:output_type -> igm.v1.GetIssueResponse
-	12, // 31: igm.v1.IssueService.ListIssues:output_type -> igm.v1.ListIssueResponse
-	12, // 32: igm.v1.IssueService.ListIssueByOrder:output_type -> igm.v1.ListIssueResponse
-	26, // 33: igm.v1.IssueService.HandleOnIssue:output_type -> igm.v1.OnIssueResponse
-	28, // 34: igm.v1.IssueService.HandleOnIssueStatus:output_type -> igm.v1.OnIssueStatusResponse
-	27, // [27:35] is the sub-list for method output_type
-	19, // [19:27] is the sub-list for method input_type
+	29, // 25: igm.v1.IssueService.HandleIssueStatus:input_type -> igm.v1.IssueStatusRequest
+	25, // 26: igm.v1.IssueService.HandleOnIssue:input_type -> igm.v1.OnIssueRequest
+	27, // 27: igm.v1.IssueService.HandleOnIssueStatus:input_type -> igm.v1.OnIssueStatusRequest
+	3,  // 28: igm.v1.IssueService.CreateIssue:output_type -> igm.v1.CreateIssueResponse
+	5,  // 29: igm.v1.IssueService.UpdateIssue:output_type -> igm.v1.UpdateIssueResponse
+	7,  // 30: igm.v1.IssueService.CloseIssue:output_type -> igm.v1.CloseIssueResponse
+	9,  // 31: igm.v1.IssueService.GetIssue:output_type -> igm.v1.GetIssueResponse
+	12, // 32: igm.v1.IssueService.ListIssues:output_type -> igm.v1.ListIssueResponse
+	12, // 33: igm.v1.IssueService.ListIssueByOrder:output_type -> igm.v1.ListIssueResponse
+	30, // 34: igm.v1.IssueService.HandleIssueStatus:output_type -> igm.v1.IssueStatusResponse
+	26, // 35: igm.v1.IssueService.HandleOnIssue:output_type -> igm.v1.OnIssueResponse
+	28, // 36: igm.v1.IssueService.HandleOnIssueStatus:output_type -> igm.v1.OnIssueStatusResponse
+	28, // [28:37] is the sub-list for method output_type
+	19, // [19:28] is the sub-list for method input_type
 	19, // [19:19] is the sub-list for extension type_name
 	19, // [19:19] is the sub-list for extension extendee
 	0,  // [0:19] is the sub-list for field type_name
@@ -2301,7 +2443,7 @@ func file_api_proto_igm_v1_issue_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_proto_igm_v1_issue_proto_rawDesc), len(file_api_proto_igm_v1_issue_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   30,
+			NumMessages:   32,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -33,7 +33,7 @@ func main() {
 	}
 	log.Println("connected to redis")
 	issuRepo := repository.NewIssueRepository(db)
-	OnIssueRepo :=repository.NewOnIssueRepository(db)
+	OnIssueRepo := repository.NewOnIssueRepository(db)
 	redisRepo := repository.NewRedisRepository(redisClient)
 
 	ondcClient := services.NewOndcClient(cfg.SubscriberID, cfg.BapURI)
@@ -44,8 +44,10 @@ func main() {
 	}
 
 	issueService := services.NewIssueService(issuRepo, redisRepo, ondcClient, serviceConfig)
-	onIssueService :=services.NewOnIssueService(OnIssueRepo, redisRepo, ondcClient, serviceConfig)
-	issueHandler := handlers.NewIssueHandler(issueService,onIssueService)
+	onIssueService := services.NewOnIssueService(OnIssueRepo, redisRepo, ondcClient, serviceConfig)
+	issueStatusService := services.NewIssueStatusService(issuRepo, redisRepo, ondcClient, serviceConfig)
+
+	issueHandler := handlers.NewIssueHandler(issueService, onIssueService, issueStatusService)
 
 	grpcServer := server.NewGRPCServer(cfg.GRPCPort, issueHandler)
 

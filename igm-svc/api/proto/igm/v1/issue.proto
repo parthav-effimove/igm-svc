@@ -14,6 +14,7 @@ service IssueService{
     rpc ListIssues(ListIssueRequest) returns(ListIssueResponse);
     rpc ListIssueByOrder(ListIssueByOrderRequest) returns(ListIssueResponse);
 
+    rpc HandleIssueStatus(IssueStatusRequest) returns (IssueStatusResponse);
     rpc HandleOnIssue(OnIssueRequest) returns(OnIssueResponse);
     rpc HandleOnIssueStatus(OnIssueStatusRequest) returns(OnIssueStatusResponse);
 
@@ -211,6 +212,21 @@ message OnIssueStatusRequest{
 message OnIssueStatusResponse{
     string status = 1;
     string message = 2;
+}
+
+//+++++++ issue_status workflow ++++++
+
+message IssueStatusRequest {
+    string user_id = 1;
+    string issue_id = 2;
+}
+
+message IssueStatusResponse {
+    string issue_id = 1;
+    string status = 2;
+    string message = 3;
+    bool ondc_sent = 4;
+    string ondc_message = 5;
 }
 
 //+++++++++++++++++++++++++++++++

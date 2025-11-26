@@ -39,12 +39,17 @@ func (h *OnIssueService) ProcessOnIssue(ctx context.Context, transactionID, mess
 	}
 	marshaler := protojson.MarshalOptions{EmitUnpopulated: false}
 	raw, err := marshaler.Marshal(payload)
-	//todo ondccallback
-	err = h.onIssueRepo.SaveOnIssueCallback(ctx, transactionID, messageID, raw)
+	if err != nil {
+		return fmt.Errorf("failed to marshal payload: %w", err)
+	}else{
+		err = h.onIssueRepo.SaveOnIssueCallback(ctx, transactionID, messageID, raw)
 	if err != nil {
 
 		log.Printf("warn: SaveOndcCallback returned: %v", err)
 	}
+	}
+	//todo ondccallback
+	
 
 	if payload.GetIssue() == nil || payload.Issue.GetId() == "" {
 		return fmt.Errorf("payload missing issue.id")
@@ -68,7 +73,7 @@ func (h *OnIssueService) ProcessOnIssue(ctx context.Context, transactionID, mess
 
 		last := ia.RespondentActions[len(ia.RespondentActions)-1]
 		if last != nil && last.GetRespondentAction() != "" {
-			updates["status"] = last.GetRespondentAction()
+			updates["respondent_status"] = last.GetRespondentAction()
 		}
 	}
 
@@ -135,8 +140,8 @@ func (h *OnIssueService) ProcessOnIssue(ctx context.Context, transactionID, mess
 			event["resolution"] = rs
 		}
 		if err := h.redisRepo.SaveIssueResponse(ctx, transactionID, event); err != nil {
-        log.Printf("warn: failed to push redis event: %v", err)
-    	}
+			log.Printf("warn: failed to push redis event: %v", err)
+		}
 
 	}
 

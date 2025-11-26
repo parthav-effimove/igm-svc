@@ -84,6 +84,88 @@ func (c *OndcClient) SendIssue(ctx context.Context, issue *models.Issue, operati
 
 }
 
+// SendIssueStatus sends issue_status request to BPP to check current status
+func (c *OndcClient) SendIssueStatus(ctx context.Context, issue *models.Issue) error {
+	log.Printf("Sending issue_status to BPP: %s for issue: %s", issue.BPPURI, issue.IssueID)
+
+	payload, err := c.buildIssueStatusPayload(issue)
+	if err != nil {
+		return fmt.Errorf("failed to build issue_status payload: %w", err)
+	}
+
+	body, err := json.Marshal(payload)
+	if err != nil {
+		return fmt.Errorf("failed to marshal payload: %w", err)
+	}
+
+	log.Printf("[ONDC] issue_status request payload: %s", string(body))
+
+	authHeader, err := c.createAuthHeader(body)
+	if err != nil {
+		return fmt.Errorf("failed to create auth header: %w", err)
+	}
+
+	url := issue.BPPURI
+	if url[len(url)-1] != '/' {
+		url += "/"
+	}
+	url += "issue_status"
+
+	httpReq, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(body))
+	if err != nil {
+		return fmt.Errorf("failed to create HTTP request: %w", err)
+	}
+
+	httpReq.Header.Set("Content-Type", "application/json")
+	httpReq.Header.Set("Authorization", authHeader)
+
+	resp, err := c.httpClient.Do(httpReq)
+	if err != nil {
+		return fmt.Errorf("HTTP request failed: %w", err)
+	}
+	defer resp.Body.Close()
+
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("failed to read response body: %w", err)
+	}
+
+	log.Printf("BPP issue_status response status: %d", resp.StatusCode)
+	log.Printf("BPP issue_status response body: %s", string(respBody))
+
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusAccepted {
+		return fmt.Errorf("BPP returned error status %d: %s", resp.StatusCode, string(respBody))
+	}
+
+	return nil
+}
+
+func (c *OndcClient) buildIssueStatusPayload(issue *models.Issue) (map[string]interface{}, error) {
+	ctx := map[string]interface{}{
+		"domain":         "nic2004:60232",
+		"country":        "IND",
+		"city":           "std:080",
+		"action":         "issue_status", 
+		"core_version":   "1.2.0",
+		"bap_id":         c.subscriberID,
+		"bap_uri":        c.bapURI,
+		"bpp_id":         issue.BPPID,
+		"bpp_uri":        issue.BPPURI,
+		"transaction_id": issue.TransactionID,
+		"message_id":     uuid.New().String(),
+		"timestamp":      time.Now().UTC().Format(time.RFC3339),
+		"ttl":            "PT30S",
+	}
+
+	
+	return map[string]interface{}{
+		"context": ctx,
+		"message": map[string]interface{}{
+			"issue_id": issue.IssueID,
+		},
+	}, nil
+}
+
 func (c *OndcClient) buildIssuePayload(issue *models.Issue, operation string) (map[string]interface{}, error) {
 	ctx := map[string]interface{}{
 		"domain":         "nic2004:60232",
