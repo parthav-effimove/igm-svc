@@ -45,7 +45,7 @@ func main() {
 
 	issueService := services.NewIssueService(issuRepo, redisRepo, ondcClient, serviceConfig)
 	onIssueService := services.NewOnIssueService(OnIssueRepo, redisRepo, ondcClient, serviceConfig)
-	issueStatusService := services.NewIssueStatusService(issuRepo, redisRepo, ondcClient, serviceConfig)
+	issueStatusService := services.NewIssueStatusService(issuRepo, OnIssueRepo, redisRepo, ondcClient, serviceConfig)
 
 	issueHandler := handlers.NewIssueHandler(issueService, onIssueService, issueStatusService)
 

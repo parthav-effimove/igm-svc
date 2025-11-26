@@ -224,7 +224,8 @@ message OnIssueResponse{
 message OnIssueStatusRequest{
     string transaction_id = 1;
     string message_id = 2;
-    OnIssuePayload payload = 3;
+    string issue_id = 3;
+    OnIssuePayload payload = 4;
 }
 
 message OnIssueStatusResponse{

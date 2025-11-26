@@ -246,7 +246,7 @@ type CreateIssueResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	IssueId       string                 `protobuf:"bytes,1,opt,name=issue_id,json=issueId,proto3" json:"issue_id,omitempty"`
 	OrderId       string                 `protobuf:"bytes,2,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
-	Status        string                 `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"` //open
+	Status        string                 `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`
 	TransactionId string                 `protobuf:"bytes,4,opt,name=transaction_id,json=transactionId,proto3" json:"transaction_id,omitempty"`
 	CreatedAt     string                 `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	OndcSent      bool                   `protobuf:"varint,6,opt,name=ondc_sent,json=ondcSent,proto3" json:"ondc_sent,omitempty"`
@@ -341,7 +341,7 @@ type UpdateIssueRequest struct {
 	IssueId                    string                 `protobuf:"bytes,2,opt,name=issue_id,json=issueId,proto3" json:"issue_id,omitempty"`
 	OrderId                    string                 `protobuf:"bytes,3,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
 	IssueType                  string                 `protobuf:"bytes,4,opt,name=issue_type,json=issueType,proto3" json:"issue_type,omitempty"`
-	Status                     string                 `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"` //new status
+	Status                     string                 `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
 	ComplainantActionShortDesc string                 `protobuf:"bytes,6,opt,name=complainant_action_short_desc,json=complainantActionShortDesc,proto3" json:"complainant_action_short_desc,omitempty"`
 	unknownFields              protoimpl.UnknownFields
 	sizeCache                  protoimpl.SizeCache
@@ -1922,7 +1922,8 @@ type OnIssueStatusRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TransactionId string                 `protobuf:"bytes,1,opt,name=transaction_id,json=transactionId,proto3" json:"transaction_id,omitempty"`
 	MessageId     string                 `protobuf:"bytes,2,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`
-	Payload       *OnIssuePayload        `protobuf:"bytes,3,opt,name=payload,proto3" json:"payload,omitempty"`
+	IssueId       string                 `protobuf:"bytes,3,opt,name=issue_id,json=issueId,proto3" json:"issue_id,omitempty"`
+	Payload       *OnIssuePayload        `protobuf:"bytes,4,opt,name=payload,proto3" json:"payload,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1967,6 +1968,13 @@ func (x *OnIssueStatusRequest) GetTransactionId() string {
 func (x *OnIssueStatusRequest) GetMessageId() string {
 	if x != nil {
 		return x.MessageId
+	}
+	return ""
+}
+
+func (x *OnIssueStatusRequest) GetIssueId() string {
+	if x != nil {
+		return x.IssueId
 	}
 	return ""
 }
@@ -2477,12 +2485,13 @@ const file_api_proto_igm_v1_issue_proto_rawDesc = "" +
 	" \x01(\v2\x16.igm.v1.OnIssuePayloadR\apayload\"C\n" +
 	"\x0fOnIssueResponse\x12\x16\n" +
 	"\x06status\x18\x01 \x01(\tR\x06status\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"\x8e\x01\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"\xa9\x01\n" +
 	"\x14OnIssueStatusRequest\x12%\n" +
 	"\x0etransaction_id\x18\x01 \x01(\tR\rtransactionId\x12\x1d\n" +
 	"\n" +
-	"message_id\x18\x02 \x01(\tR\tmessageId\x120\n" +
-	"\apayload\x18\x03 \x01(\v2\x16.igm.v1.OnIssuePayloadR\apayload\"I\n" +
+	"message_id\x18\x02 \x01(\tR\tmessageId\x12\x19\n" +
+	"\bissue_id\x18\x03 \x01(\tR\aissueId\x120\n" +
+	"\apayload\x18\x04 \x01(\v2\x16.igm.v1.OnIssuePayloadR\apayload\"I\n" +
 	"\x15OnIssueStatusResponse\x12\x16\n" +
 	"\x06status\x18\x01 \x01(\tR\x06status\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\"H\n" +

@@ -41,15 +41,14 @@ func (h *OnIssueService) ProcessOnIssue(ctx context.Context, transactionID, mess
 	raw, err := marshaler.Marshal(payload)
 	if err != nil {
 		return fmt.Errorf("failed to marshal payload: %w", err)
-	}else{
+	} else {
 		err = h.onIssueRepo.SaveOnIssueCallback(ctx, transactionID, messageID, raw)
-	if err != nil {
+		if err != nil {
 
-		log.Printf("warn: SaveOndcCallback returned: %v", err)
-	}
+			log.Printf("warn: SaveOndcCallback returned: %v", err)
+		}
 	}
 	//todo ondccallback
-	
 
 	if payload.GetIssue() == nil || payload.Issue.GetId() == "" {
 		return fmt.Errorf("payload missing issue.id")
