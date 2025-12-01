@@ -45,12 +45,17 @@ func NewIssueService(issueRepo repository.IssueRepository,
 }
 
 func (s *IssueService) CreateIssue(ctx context.Context, req *pb.CreateIssueRequest) (*pb.CreateIssueResponse, error) {
-	log.Println("1.reacher CreateIssue [issueservice]")
-	err := s.validateCreateRequest(req)
+	
+	err:=s.ValidateNoActiveIssueExistsWithSameCategory(req)
+	if err!=nil{
+		return nil,fmt.Errorf("validation failed :%w", err)
+	}
+	
+	err = s.validateCreateRequest(req)
 	if err != nil {
 		return nil, fmt.Errorf("validation failed :%w", err)
 	}
-	log.Println("3.reacher after Create][issue_repo]")
+	
 	userID, err := uuid.Parse(req.UserId)
 	if err != nil {
 		return nil, fmt.Errorf("invalid user_id :%w", err)

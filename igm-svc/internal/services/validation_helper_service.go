@@ -200,6 +200,18 @@ func Contains(slice []string, item string) bool {
 	
 // todo validate functions
 func (s *IssueService) ValidateNoActiveIssueExistsWithSameCategory(req *pb.CreateIssueRequest) error {
+	userID, err :=uuid.Parse(req.UserId)
+	if err != nil {
+		return fmt.Errorf("invalid user_id: %w", err)
+	}
+
+	exists, err := s.issueRepo.HasActiveIssueWithSameCategory(userID, req.Category,req.OrderId)
+	if err != nil {
+		return fmt.Errorf("failed to check active issue: %w", err)
+	}
+	if exists {
+		return fmt.Errorf("active issue with same category already exists for order %s in category %s", req.OrderId, req.Category)
+	}
 	return nil
 
 }

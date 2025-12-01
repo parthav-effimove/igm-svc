@@ -18,6 +18,7 @@ type IssueRepository interface {
 	GetByTransactionID(ctx context.Context, transactionID uuid.UUID) ([]*models.Issue, error)
 	Update(ctx context.Context, issue *models.Issue) error
 	GetIssueExistByIssueID(issueID string, userID uuid.UUID)(*models.Issue,error)
+	HasActiveIssueWithSameCategory(userID uuid.UUID, category string, orderID string) (bool, error)
 }
 
 type issueRepository struct {
@@ -99,6 +100,14 @@ func (r *issueRepository)GetIssueExistByIssueID(issueID string, userID uuid.UUID
     	return &issue, nil
 	}
 
+func (r *issueRepository)HasActiveIssueWithSameCategory(userID uuid.UUID, category string, orderID string) (bool, error){
+	var issue models.Issue
+	err:=r.db.Where("user_id=? AND category=? AND order_id=? AND status='OPEN'",userID,category,orderID).First(&issue).Error
+	if err!=nil{
+		return false,err
+	}
+	return true,nil
+}
 
 
 
