@@ -2,9 +2,10 @@ package handlers
 
 import (
 	"context"
-	pb "igm-svc/api/proto/igm/v1"
 	"igm-svc/internal/services"
 	"log"
+
+	pb "github.com/parthav-effimove/ONDC-Protos/protos/ondc/igm/v1"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

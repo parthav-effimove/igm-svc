@@ -3,9 +3,10 @@ package services
 import (
 	"encoding/json"
 	"fmt"
-	pb "igm-svc/api/proto/igm/v1"
 	"igm-svc/internal/models"
 	"time"
+
+	pb "github.com/parthav-effimove/ONDC-Protos/protos/ondc/igm/v1"
 
 	"github.com/google/uuid"
 	"gorm.io/datatypes"
@@ -197,15 +198,15 @@ func Contains(slice []string, item string) bool {
 	}
 	return false
 }
-	
+
 // todo validate functions
 func (s *IssueService) ValidateNoActiveIssueExistsWithSameCategory(req *pb.CreateIssueRequest) error {
-	userID, err :=uuid.Parse(req.UserId)
+	userID, err := uuid.Parse(req.UserId)
 	if err != nil {
 		return fmt.Errorf("invalid user_id: %w", err)
 	}
 
-	exists, err := s.issueRepo.HasActiveIssueWithSameCategory(userID, req.Category,req.OrderId)
+	exists, err := s.issueRepo.HasActiveIssueWithSameCategory(userID, req.Category, req.OrderId)
 	if err != nil {
 		return fmt.Errorf("failed to check active issue: %w", err)
 	}

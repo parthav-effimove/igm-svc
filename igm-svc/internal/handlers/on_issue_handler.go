@@ -3,8 +3,9 @@ package handlers
 import (
 	"context"
 	"fmt"
-	pb "igm-svc/api/proto/igm/v1"
 	"log"
+
+	pb "github.com/parthav-effimove/ONDC-Protos/protos/ondc/igm/v1"
 )
 
 func (h *IssueHandler) HandleOnIssue(ctx context.Context, req *pb.OnIssueRequest) (*pb.OnIssueResponse, error) {
@@ -23,7 +24,3 @@ func (h *IssueHandler) HandleOnIssue(ctx context.Context, req *pb.OnIssueRequest
 	return &pb.OnIssueResponse{Status: "SUCCESS", Message: "callback processed"}, nil
 
 }
-
-
-
-

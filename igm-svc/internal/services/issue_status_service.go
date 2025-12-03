@@ -4,11 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	pb "igm-svc/api/proto/igm/v1"
 	"igm-svc/internal/models"
 	"igm-svc/internal/repository"
 	"log"
 	"time"
+
+	pb "github.com/parthav-effimove/ONDC-Protos/protos/ondc/igm/v1"
 
 	"github.com/google/uuid"
 	"google.golang.org/protobuf/encoding/protojson"

@@ -3,8 +3,9 @@ package handlers
 import (
 	"context"
 	"fmt"
-	pb "igm-svc/api/proto/igm/v1"
 	"log"
+
+	pb "github.com/parthav-effimove/ONDC-Protos/protos/ondc/igm/v1"
 )
 
 func (h *IssueHandler) HandleIssueStatus(ctx context.Context, req *pb.IssueStatusRequest) (*pb.IssueStatusResponse, error) {

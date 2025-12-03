@@ -10,7 +10,7 @@ import (
 	"time"
 
 	//replace with repo
-	pb "igm-svc/api/proto/igm/v1"
+	pb "github.com/parthav-effimove/ONDC-Protos/protos/ondc/igm/v1"
 
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
@@ -45,17 +45,17 @@ func NewIssueService(issueRepo repository.IssueRepository,
 }
 
 func (s *IssueService) CreateIssue(ctx context.Context, req *pb.CreateIssueRequest) (*pb.CreateIssueResponse, error) {
-	
-	err:=s.ValidateNoActiveIssueExistsWithSameCategory(req)
-	if err!=nil{
-		return nil,fmt.Errorf("validation failed :%w", err)
+
+	err := s.ValidateNoActiveIssueExistsWithSameCategory(req)
+	if err != nil {
+		return nil, fmt.Errorf("validation failed :%w", err)
 	}
-	
+
 	err = s.validateCreateRequest(req)
 	if err != nil {
 		return nil, fmt.Errorf("validation failed :%w", err)
 	}
-	
+
 	userID, err := uuid.Parse(req.UserId)
 	if err != nil {
 		return nil, fmt.Errorf("invalid user_id :%w", err)
